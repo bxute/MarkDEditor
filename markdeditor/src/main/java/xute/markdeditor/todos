@@ -1,0 +1,5 @@
+Each Component should contain its state/config.
+If user changes focus to a particular component, Editor should
+ - callback with the state/config.
+ - add support for ol mode
+

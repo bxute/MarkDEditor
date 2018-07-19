@@ -1,4 +1,4 @@
-package xute.markdeditor.models;
+package xute.markdeditor.utilities;
 
 public class Constants {
   public static final String CTYPE_TEXT = "text";
@@ -7,4 +7,7 @@ public class Constants {
   public static final String CTYPE_BLOCKQUOTE = "blockquote";
   public static final String CTYPE_CODE = "code";
   public static final String CTYPE_DIVIDER = "divider";
+
+  public static final String LI_OL = "ol";
+  public static final String LI_UL = "ul";
 }

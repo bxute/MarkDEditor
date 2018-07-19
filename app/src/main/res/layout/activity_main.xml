@@ -46,4 +46,24 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content" />
 
+
+   <Button
+       android:id="@+id/ol"
+       android:onClick="olMode"
+       android:text="OL MODE"
+       android:layout_toEndOf="@+id/ul"
+       android:layout_above="@+id/headingBtn"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
+
+
+   <Button
+       android:id="@+id/ul"
+       android:onClick="ulMode"
+       android:layout_above="@id/headingBtn"
+       android:text="UL MODE"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
+
+
 </RelativeLayout>

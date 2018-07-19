@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,13 +17,12 @@ import xute.markdeditor.models.ComponentTag;
 import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.FontSize;
 
-import static xute.markdeditor.Styles.TextStyle.BLOCKQUOTE;
-import static xute.markdeditor.Styles.TextStyle.H1;
-import static xute.markdeditor.Styles.TextStyle.H5;
-import static xute.markdeditor.Styles.TextStyle.NO_HEADING;
+import static xute.markdeditor.Styles.RowType.BLOCKQUOTE;
+import static xute.markdeditor.Styles.RowType.H1;
+import static xute.markdeditor.Styles.RowType.H5;
+import static xute.markdeditor.Styles.RowType.NORMAL;
 
 public class TextComponent {
-
   private final Context mContext;
   private TextComponentCallback _textComponentCallback;
   private Resources r;
@@ -33,8 +33,9 @@ public class TextComponent {
     _textComponentCallback = textComponentCallback;
   }
 
-  public EditText newEditTextComponent() {
-    final EditText et = new EditText(mContext);
+  public TextComponentItem newTextComponent(int mode) {
+    final TextComponentItem customInput = new TextComponentItem(mContext, mode);
+    final EditText et = customInput.getInputBox();
     et.setBackgroundResource(R.drawable.text_input_bg);
     et.setPadding(
      getPxFromSp(8),
@@ -49,7 +50,7 @@ public class TextComponent {
           return true;
         if (keyCode == KeyEvent.KEYCODE_DEL) {
           if (_textComponentCallback != null) {
-            _textComponentCallback.onRemoveTextComponent(((ComponentTag) view.getTag()).getComponentIndex());
+            _textComponentCallback.onRemoveTextComponent(((ComponentTag) customInput.getTag()).getComponentIndex());
           }
         }
         return false;
@@ -61,7 +62,7 @@ public class TextComponent {
       public void onFocusChange(View view, boolean inFocus) {
         if (inFocus) {
           if (_textComponentCallback != null) {
-            _textComponentCallback.onFocusGained(view);
+            _textComponentCallback.onFocusGained(customInput);
           }
         }
       }
@@ -80,10 +81,8 @@ public class TextComponent {
           if (ch == '\n') {
             et.setText(charSequence.subSequence(0, charSequence.length() - 1));
             if (_textComponentCallback != null) {
-              _textComponentCallback.onInsertTextComponent(((ComponentTag) et.getTag()).getComponentIndex());
+              _textComponentCallback.onInsertTextComponent(((ComponentTag) customInput.getTag()).getComponentIndex());
             }
-          } else {
-            et.setText(Html.fromHtml(charSequence.toString()));
           }
         }
       }
@@ -93,7 +92,7 @@ public class TextComponent {
 
       }
     });
-    return et;
+    return customInput;
   }
 
   private int getPxFromSp(int sp) {
@@ -104,20 +103,21 @@ public class TextComponent {
     ComponentTag componentTag = (ComponentTag) view.getTag();
     //check heading
     int style = ((TextComponentModel) componentTag.getComponent()).getHeadingStyle();
-    ((EditText) view).setTextSize(FontSize.getFontSize(style));
+    ((TextComponentItem) view).getInputBox().setTextSize(FontSize.getFontSize(style));
+
     if (style >= H1 && style <= H5) {
-      ((EditText) view).setTypeface(null, Typeface.BOLD);
-      (view).setBackgroundResource(R.drawable.text_input_bg);
+      ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.BOLD);
+      (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.text_input_bg);
     }
 
-    if (style == NO_HEADING) {
-      ((EditText) view).setTypeface(null, Typeface.NORMAL);
-      (view).setBackgroundResource(R.drawable.text_input_bg);
+    if (style == NORMAL) {
+      ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.NORMAL);
+      (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.text_input_bg);
     }
 
     if (style == BLOCKQUOTE) {
-      ((EditText) view).setTypeface(null, Typeface.NORMAL);
-      (view).setBackgroundResource(R.drawable.blockquote_component_bg);
+      ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.NORMAL);
+      (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.blockquote_component_bg);
     }
   }
 

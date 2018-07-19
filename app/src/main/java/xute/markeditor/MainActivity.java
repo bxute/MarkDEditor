@@ -36,4 +36,12 @@ public class MainActivity extends AppCompatActivity {
   public void addLink(View view) {
     markDEditor.addLink("Google","http://www.google.com");
   }
+
+  public void olMode(View view) {
+    markDEditor.changeToOLMode();
+  }
+
+  public void ulMode(View view) {
+    markDEditor.changeToULMode();
+  }
 }

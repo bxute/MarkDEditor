@@ -3,17 +3,19 @@ package xute.markdeditor;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 
 import xute.markdeditor.components.TextComponent;
+import xute.markdeditor.components.TextComponentItem;
 import xute.markdeditor.models.ComponentTag;
 import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.ComponentMetadataHelper;
 
-import static xute.markdeditor.Styles.TextStyle.BLOCKQUOTE;
+import static xute.markdeditor.Styles.RowType.BLOCKQUOTE;
+import static xute.markdeditor.Styles.RowType.NORMAL;
+import static xute.markdeditor.components.TextComponentItem.MODE_PLAIN;
+import static xute.markdeditor.components.TextComponentItem.MODE_UL;
 
 public class MarkDEditor extends MarkDCore implements TextComponent.TextComponentCallback {
   public static final String TAG = MarkDEditor.class.getSimpleName();
@@ -22,6 +24,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   private int controlIndex;
   private Context mContext;
   private TextComponent __textComponent;
+  private int currentInputMode;
 
   public MarkDEditor(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -30,6 +33,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
 
   private void init(Context context) {
     this.mContext = context;
+    currentInputMode = MODE_PLAIN;
     __textComponent = new TextComponent(context, this);
     addTextComponent(0);
   }
@@ -40,15 +44,14 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
    * @param insertIndex at which addition of new textcomponent take place.
    */
   private void addTextComponent(int insertIndex) {
-    EditText editText = __textComponent.newEditTextComponent();
+    TextComponentItem textComponentItem = __textComponent.newTextComponent(currentInputMode);
     //prepare tag
     TextComponentModel textComponentModel = new TextComponentModel();
     ComponentTag componentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
     componentTag.setComponent(textComponentModel);
-    editText.setTag(componentTag);
-    Log.d(TAG, "Tag " + componentTag.toString());
-    addView(editText, insertIndex);
-    setFocus(editText);
+    textComponentItem.setTag(componentTag);
+    addView(textComponentItem, insertIndex);
+    setFocus(textComponentItem);
   }
 
   /**
@@ -57,7 +60,8 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   private void setFocus(View view) {
     controlIndex = ((ComponentTag) view.getTag()).getComponentIndex();
     _activeView = view;
-    view.requestFocus();
+    currentInputMode = ((TextComponentItem) _activeView).getMode();
+    ((TextComponentItem) view).getInputBox().requestFocus();
   }
 
   @Override
@@ -91,12 +95,12 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     if (selfIndex == 0)
       return;
     View viewToBeRemoved = getChildAt(selfIndex);
-    String content = ((EditText) viewToBeRemoved).getText().toString();
+    String content = ((TextComponentItem) viewToBeRemoved).getInputBox().getText().toString();
     removeViewAt(selfIndex);
     reComputeTagsAfter(selfIndex);
     View previousView = getChildAt(selfIndex - 1);
-    int contentLen = ((EditText) previousView).getText().toString().length();
-    ((EditText) previousView).append(content);
+    int contentLen = ((TextComponentItem) previousView).getInputBox().getText().toString().length();
+    ((TextComponentItem) previousView).getInputBox().append(String.format(" %s", content));
     setFocus(previousView, contentLen);
   }
 
@@ -107,11 +111,11 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     controlIndex = ((ComponentTag) view.getTag()).getComponentIndex();
     _activeView = view;
     view.requestFocus();
-    if (view instanceof EditText) {
+    if (view instanceof TextComponentItem) {
       InputMethodManager mgr = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
       mgr.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
       //move cursor
-      ((EditText) view).setSelection(cursorPos);
+      ((TextComponentItem) view).getInputBox().setSelection(cursorPos);
     }
   }
 
@@ -121,7 +125,9 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
    * @param heading number to be set
    */
   public void setHeading(int heading) {
-    if (_activeView instanceof EditText) {
+    currentInputMode = MODE_PLAIN;
+    if (_activeView instanceof TextComponentItem) {
+      ((TextComponentItem) _activeView).setMode(currentInputMode);
       ComponentTag componentTag = (ComponentTag) _activeView.getTag();
       ((TextComponentModel) componentTag.getComponent()).setHeadingStyle(heading);
       __textComponent.updateComponent(_activeView);
@@ -132,7 +138,9 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
    * changes the current text into blockquote.
    */
   public void changeToBlockquote() {
-    if (_activeView instanceof EditText) {
+    currentInputMode = MODE_PLAIN;
+    if (_activeView instanceof TextComponentItem) {
+      ((TextComponentItem) _activeView).setMode(currentInputMode);
       ComponentTag componentTag = (ComponentTag) _activeView.getTag();
       ((TextComponentModel) componentTag.getComponent()).setHeadingStyle(BLOCKQUOTE);
       __textComponent.updateComponent(_activeView);
@@ -146,7 +154,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
    * @param url  linking url.
    */
   public void addLink(String text, String url) {
-    if (_activeView instanceof EditText) {
+    if (_activeView instanceof TextComponentItem) {
       StringBuilder stringBuilder = new StringBuilder();
       stringBuilder
        .append(" <a href=\"")
@@ -154,7 +162,21 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
        .append("\">")
        .append(text)
        .append("</a> ");
-      ((EditText) _activeView).append(stringBuilder.toString());
+      ((TextComponentItem) _activeView).getInputBox().append(stringBuilder.toString());
+    }
+  }
+
+  public void changeToOLMode() {
+
+  }
+
+  public void changeToULMode() {
+    currentInputMode = MODE_UL;
+    if (_activeView instanceof TextComponentItem) {
+      ((TextComponentItem) _activeView).setMode(currentInputMode);
+      ComponentTag componentTag = (ComponentTag) _activeView.getTag();
+      ((TextComponentModel) componentTag.getComponent()).setHeadingStyle(NORMAL);
+      __textComponent.updateComponent(_activeView);
     }
   }
 }
