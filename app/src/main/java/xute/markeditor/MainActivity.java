@@ -24,4 +24,16 @@ public class MainActivity extends AppCompatActivity {
     Log.d("MainAct", "New Heading " + _heading);
     markDEditor.setHeading(_heading);
   }
+
+  public void changeHToBlockquote(View view) {
+    markDEditor.changeToBlockquote();
+  }
+
+  public void changeToNormal(View view) {
+    markDEditor.setHeading(-1);
+  }
+
+  public void addLink(View view) {
+    markDEditor.addLink("Google","http://www.google.com");
+  }
 }

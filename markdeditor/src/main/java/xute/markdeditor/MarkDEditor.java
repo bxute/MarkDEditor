@@ -13,6 +13,8 @@ import xute.markdeditor.models.ComponentTag;
 import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.ComponentMetadataHelper;
 
+import static xute.markdeditor.Styles.TextStyle.BLOCKQUOTE;
+
 public class MarkDEditor extends MarkDCore implements TextComponent.TextComponentCallback {
   public static final String TAG = MarkDEditor.class.getSimpleName();
   private View _activeView;
@@ -126,4 +128,33 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     }
   }
 
+  /**
+   * changes the current text into blockquote.
+   */
+  public void changeToBlockquote() {
+    if (_activeView instanceof EditText) {
+      ComponentTag componentTag = (ComponentTag) _activeView.getTag();
+      ((TextComponentModel) componentTag.getComponent()).setHeadingStyle(BLOCKQUOTE);
+      __textComponent.updateComponent(_activeView);
+    }
+  }
+
+  /**
+   * adds link.
+   *
+   * @param text link text
+   * @param url  linking url.
+   */
+  public void addLink(String text, String url) {
+    if (_activeView instanceof EditText) {
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder
+       .append(" <a href=\"")
+       .append(url)
+       .append("\">")
+       .append(text)
+       .append("</a> ");
+      ((EditText) _activeView).append(stringBuilder.toString());
+    }
+  }
 }

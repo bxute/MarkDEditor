@@ -4,14 +4,22 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
+import xute.markdeditor.R;
 import xute.markdeditor.models.ComponentTag;
 import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.FontSize;
+
+import static xute.markdeditor.Styles.TextStyle.BLOCKQUOTE;
+import static xute.markdeditor.Styles.TextStyle.H1;
+import static xute.markdeditor.Styles.TextStyle.H5;
+import static xute.markdeditor.Styles.TextStyle.NO_HEADING;
 
 public class TextComponent {
 
@@ -27,6 +35,13 @@ public class TextComponent {
 
   public EditText newEditTextComponent() {
     final EditText et = new EditText(mContext);
+    et.setBackgroundResource(R.drawable.text_input_bg);
+    et.setPadding(
+     getPxFromSp(8),
+     getPxFromSp(4),
+     getPxFromSp(8),
+     getPxFromSp(4)
+    );
     et.setOnKeyListener(new View.OnKeyListener() {
       @Override
       public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
@@ -67,6 +82,8 @@ public class TextComponent {
             if (_textComponentCallback != null) {
               _textComponentCallback.onInsertTextComponent(((ComponentTag) et.getTag()).getComponentIndex());
             }
+          } else {
+            et.setText(Html.fromHtml(charSequence.toString()));
           }
         }
       }
@@ -79,15 +96,28 @@ public class TextComponent {
     return et;
   }
 
+  private int getPxFromSp(int sp) {
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, r.getDisplayMetrics());
+  }
+
   public void updateComponent(View view) {
     ComponentTag componentTag = (ComponentTag) view.getTag();
     //check heading
-    int heading = ((TextComponentModel) componentTag.getComponent()).getHeadingStyle();
-    ((EditText) view).setTextSize(FontSize.getFontSize(heading));
-    if (heading != -1) {
+    int style = ((TextComponentModel) componentTag.getComponent()).getHeadingStyle();
+    ((EditText) view).setTextSize(FontSize.getFontSize(style));
+    if (style >= H1 && style <= H5) {
       ((EditText) view).setTypeface(null, Typeface.BOLD);
-    } else {
+      (view).setBackgroundResource(R.drawable.text_input_bg);
+    }
+
+    if (style == NO_HEADING) {
       ((EditText) view).setTypeface(null, Typeface.NORMAL);
+      (view).setBackgroundResource(R.drawable.text_input_bg);
+    }
+
+    if (style == BLOCKQUOTE) {
+      ((EditText) view).setTypeface(null, Typeface.NORMAL);
+      (view).setBackgroundResource(R.drawable.blockquote_component_bg);
     }
   }
 

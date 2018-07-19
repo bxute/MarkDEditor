@@ -1,11 +1,11 @@
 package xute.markdeditor.utilities;
 
-import static xute.markdeditor.Styles.Headings.H1;
-import static xute.markdeditor.Styles.Headings.H2;
-import static xute.markdeditor.Styles.Headings.H3;
-import static xute.markdeditor.Styles.Headings.H4;
-import static xute.markdeditor.Styles.Headings.H5;
-import static xute.markdeditor.Styles.Headings.NO_HEADING;
+import static xute.markdeditor.Styles.TextStyle.H1;
+import static xute.markdeditor.Styles.TextStyle.H2;
+import static xute.markdeditor.Styles.TextStyle.H3;
+import static xute.markdeditor.Styles.TextStyle.H4;
+import static xute.markdeditor.Styles.TextStyle.H5;
+import static xute.markdeditor.Styles.TextStyle.NO_HEADING;
 
 public class FontSize {
   public static final int H1_SIZE = 32;
