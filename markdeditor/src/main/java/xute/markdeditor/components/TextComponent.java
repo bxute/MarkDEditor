@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
@@ -33,10 +32,10 @@ public class TextComponent {
     _textComponentCallback = textComponentCallback;
   }
 
-  public TextComponentItem newTextComponent(int mode) {
+  public TextComponentItem newTextComponent(final int mode) {
     final TextComponentItem customInput = new TextComponentItem(mContext, mode);
     final EditText et = customInput.getInputBox();
-    et.setBackgroundResource(R.drawable.text_input_bg);
+    et.setImeActionLabel("Enter", KeyEvent.KEYCODE_ENTER);
     et.setPadding(
      getPxFromSp(8),
      getPxFromSp(4),
@@ -76,7 +75,7 @@ public class TextComponent {
 
       @Override
       public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-        if (before < count) {
+        if (charSequence.length() > 1) {
           char ch = charSequence.charAt(charSequence.length() - 1);
           if (ch == '\n') {
             et.setText(charSequence.subSequence(0, charSequence.length() - 1));

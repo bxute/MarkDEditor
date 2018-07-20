@@ -5,11 +5,12 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/indicator"
         android:textColor="#000000"
         android:textSize="16sp"
         android:gravity="center"
-        android:text="\u2022"
+        android:text="●"
         android:background="#ffffff"
         android:layout_width="24sp"
         android:layout_height="24sp" />

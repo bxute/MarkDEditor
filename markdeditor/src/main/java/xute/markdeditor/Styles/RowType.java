@@ -8,5 +8,5 @@ public class RowType {
   public static final int H4 = 3;
   public static final int H5 = 4;
   public static final int BLOCKQUOTE = 5;
-  public static final int BULLET = 6;
+  public static final int CODE = 6;
 }

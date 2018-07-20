@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -16,6 +17,8 @@ public class TextComponentItem extends FrameLayout {
   public static final int MODE_PLAIN = 0;
   public static final int MODE_UL = 1;
   public static final int MODE_OL = 2;
+
+  public static final String UL_BULLET = "\u25CF";
   TextView indicator;
   EditText text;
   private int mEditorMode;
@@ -30,11 +33,7 @@ public class TextComponentItem extends FrameLayout {
     indicator = view.findViewById(R.id.indicator);
     text = view.findViewById(R.id.text);
     this.mEditorMode = mode;
-    if (mode == MODE_PLAIN) {
-      indicator.setVisibility(GONE);
-    } else {
-      indicator.setVisibility(VISIBLE);
-    }
+    setMode(mode);
   }
 
   public TextComponentItem(@NonNull Context context, int mode) {
@@ -67,8 +66,14 @@ public class TextComponentItem extends FrameLayout {
     this.mEditorMode = mode;
     if (mode == MODE_PLAIN) {
       indicator.setVisibility(GONE);
-    } else {
+      text.setBackgroundResource(R.drawable.text_input_bg);
+    } else if (mode == MODE_UL) {
+      indicator.setText(UL_BULLET);
       indicator.setVisibility(VISIBLE);
+      text.setBackgroundResource(R.drawable.text_input_bg);
+    } else if (mode == MODE_OL) {
+      indicator.setVisibility(VISIBLE);
+      text.setBackgroundResource(R.drawable.text_input_bg);
     }
   }
 }

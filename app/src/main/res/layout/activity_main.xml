@@ -41,7 +41,7 @@
    <Button
        android:onClick="addLink"
        android:layout_below="@+id/mdEditor"
-       android:text="ADD LINK"
+       android:text="CODE"
        android:layout_toStartOf="@id/changetToNormal"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content" />
@@ -64,6 +64,5 @@
        android:text="UL MODE"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content" />
-
 
 </RelativeLayout>

@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
 
   public void changeHeading(View view) {
     int _heading = ((++heading) % 5);
-    Log.d("MainAct", "New Heading " + _heading);
     markDEditor.setHeading(_heading);
   }
 
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void addLink(View view) {
-    markDEditor.addLink("Google","http://www.google.com");
+    //markDEditor.changeToCodeView();
   }
 
   public void olMode(View view) {
