@@ -61,6 +61,14 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content" />
 
+   <Button
+       android:id="@+id/hr"
+       android:onClick="insertHR"
+       android:text="ADD HR"
+       android:layout_toEndOf="@+id/ol"
+       android:layout_above="@+id/headingBtn"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
 
    <Button
        android:id="@+id/ul"

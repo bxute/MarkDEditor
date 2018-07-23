@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import xute.markdeditor.MarkDEditor;
 import xute.markdeditor.utilities.FilePathUtils;
@@ -97,5 +96,9 @@ public class MainActivity extends AppCompatActivity {
 
   public void addImage(View view) {
     openGallery();
+  }
+
+  public void insertHR(View view) {
+    markDEditor.insertHorizontalDivider();
   }
 }

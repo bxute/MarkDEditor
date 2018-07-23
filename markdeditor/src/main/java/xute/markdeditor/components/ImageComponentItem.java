@@ -130,6 +130,10 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     this.downloadUrl = downloadUrl;
   }
 
+  public void setFocus() {
+    imageView.setEnabled(true);
+  }
+
   public String getCaption() {
     return caption;
   }

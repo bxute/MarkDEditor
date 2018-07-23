@@ -9,8 +9,10 @@ Image insert issues:
 - add remove button on image [DONE]
 - add failed message on image [DONE]
 - add success text on image   [DONE]
-- add highlighting border on image.
 - add retry button on image.  [DONE]
 - add progress bar in center   [DONE]
+
+Insert Divider:
+
 
 

@@ -3,12 +3,13 @@ package xute.markdeditor;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
 
+import xute.markdeditor.components.HorizontalDividerComponent;
+import xute.markdeditor.components.HorizontalDividerComponentItem;
 import xute.markdeditor.components.ImageComponent;
 import xute.markdeditor.components.ImageComponentItem;
 import xute.markdeditor.components.TextComponent;
@@ -32,6 +33,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   private Context mContext;
   private TextComponent __textComponent;
   private ImageComponent __imageComponent;
+  private HorizontalDividerComponent __horizontalComponent;
   private int currentInputMode;
   public MarkDEditor(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -44,6 +46,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     currentInputMode = MODE_PLAIN;
     __textComponent = new TextComponent(context, this);
     __imageComponent = new ImageComponent(context);
+    __horizontalComponent = new HorizontalDividerComponent(context);
     addTextComponent(0);
   }
 
@@ -89,17 +92,35 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   public void onRemoveTextComponent(int selfIndex) {
     if (selfIndex == 0)
       return;
+    //know the type of previous view
     View viewToBeRemoved = getChildAt(selfIndex);
+    View previousView = getChildAt(selfIndex - 1);
     String content = ((TextComponentItem) viewToBeRemoved).getInputBox().getText().toString();
     removeViewAt(selfIndex);
     reComputeTagsAfter(selfIndex);
-    View previousView = getChildAt(selfIndex - 1);
-    if (previousView instanceof TextComponentItem) {
+    if (previousView instanceof HorizontalDividerComponentItem) {
+      //remove previous view.
+      removeViewAt(selfIndex - 1);
+      reComputeTagsAfter(selfIndex - 1);
+      //focus on latest text component
+      int lastTextComponent = getLatestTextComponentIndexBefore(selfIndex - 1);
+      setFocus(getChildAt(lastTextComponent));
+    } else if (previousView instanceof TextComponentItem) {
       int contentLen = ((TextComponentItem) previousView).getInputBox().getText().toString().length();
       ((TextComponentItem) previousView).getInputBox().append(String.format(" %s", content));
       setFocus(previousView, contentLen);
     }
     refreshViewOrder();
+  }
+
+  private int getLatestTextComponentIndexBefore(int starIndex) {
+    View view = null;
+    for (int i = starIndex; i >= 0; i--) {
+      view = getChildAt(i);
+      if (view instanceof TextComponentItem)
+        return i;
+    }
+    return 0;
   }
 
   /**
@@ -205,7 +226,6 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
 
   public void insertImage(String filePath) {
     int insertIndex = checkInvalidateAndCalculateInsertIndex();
-    //check for blank box
     ImageComponentItem imageComponentItem = __imageComponent.getNewImageComponentItem(filePath, this);
     //prepare tag
     ImageComponentModel imageComponentModel = new ImageComponentModel();
@@ -213,9 +233,11 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     imageComponentTag.setComponent(imageComponentModel);
     imageComponentItem.setTag(imageComponentTag);
     addView(imageComponentItem, insertIndex);
+    reComputeTagsAfter(insertIndex);
     refreshViewOrder();
-    //add another input box below image
+    //add another text component below image
     insertIndex++;
+    currentInputMode = MODE_PLAIN;
     TextComponentItem textComponentItem = __textComponent.newTextComponent(currentInputMode);
     //prepare tag
     TextComponentModel textComponentModel = new TextComponentModel();
@@ -223,8 +245,8 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     componentTag.setComponent(textComponentModel);
     textComponentItem.setTag(componentTag);
     addView(textComponentItem, insertIndex);
+    reComputeTagsAfter(insertIndex);
     setFocus(textComponentItem);
-
   }
 
   private int checkInvalidateAndCalculateInsertIndex() {
@@ -233,13 +255,14 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     View view = getChildAt(activeIndex);
     //check for TextComponentItem
     if (view instanceof TextComponentItem) {
-      //get len
+      //if active text component has some texts.
       if (((TextComponentItem) view).getInputBox().getText().length() > 0) {
         //insert below it
         return activeIndex + 1;
       } else {
         //remove current view
         removeViewAt(activeIndex);
+        reComputeTagsAfter(activeIndex);
         refreshViewOrder();
         //insert at the current position.
         return activeIndex;
@@ -248,21 +271,34 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     return activeIndex + 1;
   }
 
+  public void insertHorizontalDivider() {
+    int insertIndex = getNextIndex();
+    HorizontalDividerComponentItem horizontalDividerComponentItem = __horizontalComponent.getNewHorizontalComponentItem();
+    ComponentTag _hrTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
+    horizontalDividerComponentItem.setTag(_hrTag);
+    addView(horizontalDividerComponentItem, insertIndex);
+    reComputeTagsAfter(insertIndex);
+    //add another text component below image
+    insertIndex++;
+    currentInputMode = MODE_PLAIN;
+    TextComponentItem textComponentItem = __textComponent.newTextComponent(currentInputMode);
+    //prepare tag
+    TextComponentModel textComponentModel = new TextComponentModel();
+    ComponentTag componentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
+    componentTag.setComponent(textComponentModel);
+    textComponentItem.setTag(componentTag);
+    addView(textComponentItem, insertIndex);
+    reComputeTagsAfter(insertIndex);
+    setFocus(textComponentItem);
+  }
+
   private int getNextIndex() {
     ComponentTag tag = (ComponentTag) _activeView.getTag();
     return tag.getComponentIndex() + 1;
   }
 
-  private void printChilds() {
-    for (int i = 0; i < getChildCount(); i++) {
-      View child = getChildAt(i);
-      Log.d("TAG", "child at " + i + " type " + ((TextComponentItem) child).getMode());
-    }
-  }
-
   @Override
   public void onImageRemove(int removeIndex) {
-    View view = getChildAt(removeIndex);
     if (removeIndex == 0) {
       //insert 1 text component
       removeViewAt(0);
@@ -270,6 +306,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     } else {
       removeViewAt(removeIndex);
     }
+    reComputeTagsAfter(removeIndex);
     refreshViewOrder();
   }
 }
