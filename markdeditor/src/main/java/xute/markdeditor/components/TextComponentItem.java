@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +11,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import xute.markdeditor.R;
+import xute.markdeditor.models.ComponentTag;
+import xute.markdeditor.models.TextComponentModel;
 
 public class TextComponentItem extends FrameLayout {
   public static final int MODE_PLAIN = 0;
@@ -60,6 +61,12 @@ public class TextComponentItem extends FrameLayout {
 
   public int getMode() {
     return mEditorMode;
+  }
+
+  public int getTextHeadingStyle() {
+    ComponentTag componentTag = (ComponentTag) getTag();
+    //check heading
+    return ((TextComponentModel) componentTag.getComponent()).getHeadingStyle();
   }
 
   public void setMode(int mode) {

@@ -9,14 +9,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
+import xute.markdeditor.EditorControlBar;
 import xute.markdeditor.MarkDEditor;
 import xute.markdeditor.utilities.FilePathUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EditorControlBar.EditorControlListener {
   int heading = -1;
   private MarkDEditor markDEditor;
+  private EditorControlBar editorControlBar;
   private final int REQUEST_IMAGE_SELECTOR = 110;
 
   @Override
@@ -24,25 +25,13 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     markDEditor = findViewById(R.id.mdEditor);
-
-  }
-
-  public void changeHeading(View view) {
-    int _heading = ((++heading) % 5);
-    markDEditor.setHeading(_heading);
-  }
-
-  public void changeHToBlockquote(View view) {
-    markDEditor.changeToBlockquote();
-  }
-
-  public void changeToNormal(View view) {
-    markDEditor.setHeading(-1);
+    editorControlBar = findViewById(R.id.controlBar);
+    editorControlBar.setEditorControlListener(this);
+    editorControlBar.setEditor(markDEditor);
   }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
     if (requestCode == REQUEST_IMAGE_SELECTOR) {
       if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
         Uri uri = data.getData();
@@ -50,14 +39,6 @@ public class MainActivity extends AppCompatActivity {
         addImage(filePath);
       }
     }
-  }
-
-  public void olMode(View view) {
-    markDEditor.changeToOLMode();
-  }
-
-  public void ulMode(View view) {
-    markDEditor.changeToULMode();
   }
 
   public void addImage(String filePath) {
@@ -94,11 +75,13 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  public void addImage(View view) {
+  @Override
+  public void onInsertImageClicked() {
     openGallery();
   }
 
-  public void insertHR(View view) {
-    markDEditor.insertHorizontalDivider();
+  @Override
+  public void onInserLinkClicked() {
+    markDEditor.addLink("Click Here", "http://www.hapramp.com");
   }
 }

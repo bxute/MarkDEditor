@@ -19,8 +19,8 @@ import xute.markdeditor.models.ImageComponentModel;
 import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.ComponentMetadataHelper;
 
-import static xute.markdeditor.Styles.RowType.BLOCKQUOTE;
-import static xute.markdeditor.Styles.RowType.NORMAL;
+import static xute.markdeditor.Styles.TextComponentStyle.BLOCKQUOTE;
+import static xute.markdeditor.Styles.TextComponentStyle.NORMAL;
 import static xute.markdeditor.components.TextComponentItem.MODE_OL;
 import static xute.markdeditor.components.TextComponentItem.MODE_PLAIN;
 import static xute.markdeditor.components.TextComponentItem.MODE_UL;
@@ -67,15 +67,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     refreshViewOrder();
   }
 
-  /**
-   * @param view to be focused on.
-   */
-  private void setFocus(View view) {
-    controlIndex = ((ComponentTag) view.getTag()).getComponentIndex();
-    _activeView = view;
-    currentInputMode = ((TextComponentItem) _activeView).getMode();
-    ((TextComponentItem) view).getInputBox().requestFocus();
-  }
+  private EditorFocusReporter editorFocusReporter;
 
   @Override
   public void onInsertTextComponent(int selfIndex) {
@@ -141,16 +133,12 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   /**
    * @param view to be focused on.
    */
-  private void setFocus(View view, int cursorPos) {
+  private void setFocus(View view) {
     controlIndex = ((ComponentTag) view.getTag()).getComponentIndex();
     _activeView = view;
-    view.requestFocus();
-    if (view instanceof TextComponentItem) {
-      InputMethodManager mgr = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-      mgr.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
-      //move cursor
-      ((TextComponentItem) view).getInputBox().setSelection(cursorPos);
-    }
+    currentInputMode = ((TextComponentItem) _activeView).getMode();
+    ((TextComponentItem) view).getInputBox().requestFocus();
+    reportStylesOfFocusedView((TextComponentItem) view);
   }
 
   /**
@@ -308,5 +296,35 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     }
     reComputeTagsAfter(removeIndex);
     refreshViewOrder();
+  }
+
+  private void reportStylesOfFocusedView(TextComponentItem view) {
+    if (editorFocusReporter != null) {
+      editorFocusReporter.onFocusedViewHas(view.getMode(), view.getTextHeadingStyle());
+    }
+  }
+
+  /**
+   * @param view to be focused on.
+   */
+  private void setFocus(View view, int cursorPos) {
+    controlIndex = ((ComponentTag) view.getTag()).getComponentIndex();
+    _activeView = view;
+    view.requestFocus();
+    if (view instanceof TextComponentItem) {
+      InputMethodManager mgr = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+      mgr.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+      //move cursor
+      ((TextComponentItem) view).getInputBox().setSelection(cursorPos);
+      reportStylesOfFocusedView((TextComponentItem) view);
+    }
+  }
+
+  public void setEditorFocusReporter(EditorFocusReporter editorFocusReporter) {
+    this.editorFocusReporter = editorFocusReporter;
+  }
+
+  public interface EditorFocusReporter {
+    void onFocusedViewHas(int mode, int textComponentStyle);
   }
 }

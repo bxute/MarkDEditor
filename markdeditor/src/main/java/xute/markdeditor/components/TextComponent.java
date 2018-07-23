@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,10 +15,10 @@ import xute.markdeditor.models.ComponentTag;
 import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.FontSize;
 
-import static xute.markdeditor.Styles.RowType.BLOCKQUOTE;
-import static xute.markdeditor.Styles.RowType.H1;
-import static xute.markdeditor.Styles.RowType.H5;
-import static xute.markdeditor.Styles.RowType.NORMAL;
+import static xute.markdeditor.Styles.TextComponentStyle.BLOCKQUOTE;
+import static xute.markdeditor.Styles.TextComponentStyle.H1;
+import static xute.markdeditor.Styles.TextComponentStyle.H5;
+import static xute.markdeditor.Styles.TextComponentStyle.NORMAL;
 
 public class TextComponent {
   private final Context mContext;

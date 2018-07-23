@@ -7,7 +7,7 @@
 
    <ScrollView
        android:background="#ffffff"
-       android:layout_above="@+id/ol"
+       android:layout_above="@+id/controlBar"
        android:layout_width="match_parent"
        android:layout_height="match_parent">
 
@@ -16,66 +16,10 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent" />
    </ScrollView>
-   <Button
-       android:id="@+id/headingBtn"
-       android:onClick="changeHeading"
+
+   <xute.markdeditor.EditorControlBar
+       android:id="@+id/controlBar"
        android:layout_alignParentBottom="true"
-       android:text="Heading"
-       android:layout_alignParentEnd="true"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content" />
-
-   <Button
-       android:id="@+id/blockquote"
-       android:onClick="changeHToBlockquote"
-       android:layout_alignParentBottom="true"
-       android:text="Blockquote"
-       android:layout_toStartOf="@id/headingBtn"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content" />
-
-   <Button
-       android:id="@+id/changetToNormal"
-       android:onClick="changeToNormal"
-       android:layout_alignParentBottom="true"
-       android:text="Normal"
-       android:layout_toStartOf="@id/blockquote"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content" />
-
-   <Button
-       android:layout_alignParentBottom="true"
-       android:onClick="addImage"
-       android:text="Image"
-       android:layout_toStartOf="@id/changetToNormal"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content" />
-
-
-   <Button
-       android:id="@+id/ol"
-       android:onClick="olMode"
-       android:text="OL MODE"
-       android:layout_toEndOf="@+id/ul"
-       android:layout_above="@+id/headingBtn"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content" />
-
-   <Button
-       android:id="@+id/hr"
-       android:onClick="insertHR"
-       android:text="ADD HR"
-       android:layout_toEndOf="@+id/ol"
-       android:layout_above="@+id/headingBtn"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content" />
-
-   <Button
-       android:id="@+id/ul"
-       android:onClick="ulMode"
-       android:layout_above="@id/headingBtn"
-       android:text="UL MODE"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content" />
-
+       android:layout_width="match_parent"
+       android:layout_height="48dp" />
 </RelativeLayout>
