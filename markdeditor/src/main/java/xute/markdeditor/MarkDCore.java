@@ -39,7 +39,7 @@ public class MarkDCore extends LinearLayout {
     int childCount = getChildCount();
     for (int i = 0; i < childCount; i++) {
       child = getChildAt(i);
-      //skip non-textcomponent items
+      //skip non-text component items
       if ((child instanceof TextComponentItem)) {
         if (((TextComponentItem) child).getMode() == MODE_OL) {
           startIndex = i;
