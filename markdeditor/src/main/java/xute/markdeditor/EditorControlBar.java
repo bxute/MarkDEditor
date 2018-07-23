@@ -61,6 +61,15 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
     imageBtn = view.findViewById(R.id.insertImageBtn);
     enabledColor = Color.parseColor("#0994cf");
     disabledColor = Color.parseColor("#3e3e3e");
+
+    normalTextBtn.setTextColor(disabledColor);
+    headingBtn.setTextColor(disabledColor);
+    headingNumberBtn.setTextColor(disabledColor);
+    bulletBtn.setColorFilter(disabledColor);
+    blockQuoteBtn.setColorFilter(disabledColor);
+    linkBtn.setColorFilter(disabledColor);
+    hrBtn.setColorFilter(disabledColor);
+    imageBtn.setColorFilter(disabledColor);
     attachListeners();
   }
 
@@ -85,7 +94,7 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
       @Override
       public void onClick(View view) {
         mEditor.setHeading(NORMAL);
-        enableNormalText(true);
+        invalidateStates(MODE_PLAIN, NORMAL);
       }
     });
 
@@ -98,7 +107,7 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
         } else {
           mEditor.setHeading(++currentHeading);
         }
-        enableHeading(true, currentHeading);
+        invalidateStates(MODE_PLAIN, currentHeading);
       }
     });
 
@@ -108,15 +117,15 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
         if (olEnabled) {
           //switch to normal
           mEditor.setHeading(NORMAL);
-          enableBullet(false, false);
+          invalidateStates(MODE_OL, NORMAL);
         } else if (ulEnabled) {
           // switch to ol mode
           mEditor.changeToOLMode();
-          enableBullet(true, true);
+          invalidateStates(MODE_OL, NORMAL);
         } else if (!olEnabled && !ulEnabled) {
           // switch to ul mode
           mEditor.changeToULMode();
-          enableBullet(true, false);
+          invalidateStates(MODE_UL, NORMAL);
         }
       }
     });
@@ -127,11 +136,11 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
         if (blockquoteEnabled) {
           //switch to normal
           mEditor.setHeading(NORMAL);
-          enableBlockquote(false);
+          invalidateStates(MODE_PLAIN, NORMAL);
         } else {
           //blockquote
           mEditor.changeToBlockquote();
-          enableBlockquote(true);
+          invalidateStates(MODE_PLAIN, BLOCKQUOTE);
         }
       }
     });
@@ -178,6 +187,7 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
       headingNumberBtn.setText(String.valueOf(headingNumber));
     } else {
       headingBtn.setTextColor(disabledColor);
+      headingNumberBtn.setTextColor(disabledColor);
       headingNumberBtn.setText("1");
     }
   }
@@ -211,8 +221,7 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
     }
   }
 
-  @Override
-  public void onFocusedViewHas(int mode, int textComponentStyle) {
+  private void invalidateStates(int mode, int textComponentStyle) {
     if (mode == MODE_OL) {
       enableBlockquote(false);
       enableHeading(false, 1);
@@ -261,6 +270,11 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
         enableBullet(false, false);
       }
     }
+  }
+
+  @Override
+  public void onFocusedViewHas(int mode, int textComponentStyle) {
+    invalidateStates(mode, textComponentStyle);
   }
 
   public void setEditorControlListener(EditorControlListener editorControlListener) {

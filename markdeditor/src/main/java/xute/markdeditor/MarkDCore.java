@@ -47,10 +47,12 @@ public class MarkDCore extends LinearLayout {
           for (int j = i; j < childCount; j++) {
             i = j;
             child = getChildAt(j);
-            if (((TextComponentItem) child).getMode() == MODE_OL) {
-              endIndex = i;
-            } else {
-              break;
+            if (child instanceof TextComponentItem) {
+              if (((TextComponentItem) child).getMode() == MODE_OL) {
+                endIndex = i;
+              } else {
+                break;
+              }
             }
           }
           //prepate model and add
