@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-   <xute.markdeditor.MarkDEditor
-       android:id="@+id/mdEditor"
+   <ScrollView
+       android:background="#ffffff"
+       android:layout_above="@+id/ol"
        android:layout_width="match_parent"
-       android:layout_height="256dp"/>
+       android:layout_height="match_parent">
 
+      <xute.markdeditor.MarkDEditor
+          android:id="@+id/mdEditor"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent" />
+   </ScrollView>
    <Button
        android:id="@+id/headingBtn"
        android:onClick="changeHeading"
-       android:layout_below="@+id/mdEditor"
+       android:layout_alignParentBottom="true"
        android:text="Heading"
        android:layout_alignParentEnd="true"
        android:layout_width="wrap_content"
@@ -23,7 +28,7 @@
    <Button
        android:id="@+id/blockquote"
        android:onClick="changeHToBlockquote"
-       android:layout_below="@+id/mdEditor"
+       android:layout_alignParentBottom="true"
        android:text="Blockquote"
        android:layout_toStartOf="@id/headingBtn"
        android:layout_width="wrap_content"
@@ -32,16 +37,16 @@
    <Button
        android:id="@+id/changetToNormal"
        android:onClick="changeToNormal"
-       android:layout_below="@+id/mdEditor"
+       android:layout_alignParentBottom="true"
        android:text="Normal"
        android:layout_toStartOf="@id/blockquote"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content" />
 
    <Button
-       android:onClick="addLink"
-       android:layout_below="@+id/mdEditor"
-       android:text="CODE"
+       android:layout_alignParentBottom="true"
+       android:onClick="addImage"
+       android:text="Image"
        android:layout_toStartOf="@id/changetToNormal"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content" />
