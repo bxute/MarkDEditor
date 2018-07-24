@@ -7,9 +7,9 @@
 
     <FrameLayout
         android:id="@+id/container1"
-        android:layout_width="36dp"
+        android:layout_width="44dp"
         android:layout_height="match_parent"
-        android:padding="8dp">
+        >
 
         <TextView
             android:id="@+id/normalTextBtn"
@@ -27,20 +27,19 @@
 
     <RelativeLayout
         android:id="@+id/container2"
-        android:layout_width="36dp"
+        android:layout_width="44dp"
         android:layout_height="match_parent"
         android:layout_toEndOf="@+id/container1">
 
         <TextView
             android:id="@+id/headingBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:fontFamily="serif-monospace"
-            android:paddingEnd="2dp"
-            android:paddingStart="2dp"
             android:text="H"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -49,13 +48,14 @@
             android:id="@+id/headingNumberBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/headingBtn"
             android:layout_marginStart="-2dp"
-            android:layout_toEndOf="@+id/headingBtn"
             android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
             android:fontFamily="serif-monospace"
             android:text="1"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -64,10 +64,9 @@
 
     <FrameLayout
         android:id="@+id/container3"
-        android:layout_width="36dp"
+        android:layout_width="44dp"
         android:layout_height="match_parent"
-        android:layout_toEndOf="@+id/container2"
-        android:padding="8dp">
+        android:layout_toEndOf="@+id/container2">
 
         <ImageView
             android:background="?selectableItemBackgroundBorderless"
@@ -75,16 +74,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
+            android:padding="10dp"
             android:src="@drawable/ul" />
 
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/container4"
-        android:layout_width="36dp"
+        android:layout_width="44dp"
         android:layout_height="match_parent"
-        android:layout_toEndOf="@+id/container3"
-        android:padding="8dp">
+        android:layout_toEndOf="@+id/container3">
 
         <ImageView
             android:background="?selectableItemBackgroundBorderless"
@@ -92,15 +91,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
+            android:padding="10dp"
             android:src="@drawable/quote" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/container5"
-        android:layout_width="36dp"
+        android:layout_width="44dp"
         android:layout_height="match_parent"
-        android:layout_toEndOf="@+id/container4"
-        android:padding="8dp">
+        android:layout_toEndOf="@+id/container4">
 
         <ImageView
             android:background="?selectableItemBackgroundBorderless"
@@ -108,15 +107,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
+            android:padding="10dp"
             android:src="@drawable/link" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/container6"
-        android:layout_width="36dp"
+        android:layout_width="44dp"
         android:layout_height="match_parent"
-        android:layout_toEndOf="@+id/container5"
-        android:padding="8dp">
+        android:layout_toEndOf="@+id/container5">
 
         <ImageView
             android:background="?selectableItemBackgroundBorderless"
@@ -124,15 +123,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
+            android:padding="10dp"
             android:src="@drawable/hr" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/container7"
-        android:layout_width="36dp"
+        android:layout_width="44dp"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:padding="8dp">
+        android:layout_alignParentEnd="true">
 
         <ImageView
             android:background="?selectableItemBackgroundBorderless"
@@ -140,6 +139,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
+            android:padding="10dp"
             android:src="@drawable/image" />
     </FrameLayout>
 

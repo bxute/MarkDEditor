@@ -118,15 +118,21 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
         if (olEnabled) {
           //switch to normal
           mEditor.setHeading(NORMAL);
-          invalidateStates(MODE_OL, NORMAL);
+          invalidateStates(MODE_PLAIN, NORMAL);
+          olEnabled = false;
+          ulEnabled = false;
         } else if (ulEnabled) {
           // switch to ol mode
           mEditor.changeToOLMode();
           invalidateStates(MODE_OL, NORMAL);
+          olEnabled = true;
+          ulEnabled = false;
         } else if (!olEnabled && !ulEnabled) {
           // switch to ul mode
           mEditor.changeToULMode();
           invalidateStates(MODE_UL, NORMAL);
+          ulEnabled = true;
+          olEnabled = false;
         }
       }
     });
