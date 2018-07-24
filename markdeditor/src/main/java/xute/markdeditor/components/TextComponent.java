@@ -108,9 +108,9 @@ public class TextComponent {
       (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.text_input_bg);
       ((TextComponentItem) view).getInputBox().setPadding(
        dpToPx(12),//left
-       dpToPx(12),//top
+       dpToPx(8),//top
        dpToPx(12),//right
-       dpToPx(12)//bottom
+       dpToPx(8)//bottom
       );
       ((TextComponentItem) view).getInputBox().setLineSpacing(2f,1.1f);
     }
@@ -120,9 +120,9 @@ public class TextComponent {
       (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.text_input_bg);
       ((TextComponentItem) view).getInputBox().setPadding(
        dpToPx(12),//left
-       dpToPx(8),//top
+       dpToPx(4),//top
        dpToPx(12),//right
-       dpToPx(8)//bottom
+       dpToPx(4)//bottom
       );
       ((TextComponentItem) view).getInputBox().setLineSpacing(2f,1.1f);
     }
