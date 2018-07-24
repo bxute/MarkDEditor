@@ -1,7 +1,9 @@
 package xute.markdeditor.models;
 
+import static xute.markdeditor.Styles.TextComponentStyle.NORMAL;
+
 public class TextComponentModel extends BaseComponentModel {
-  private int headingStyle = -1;
+  private int headingStyle = NORMAL;
 
   public int getHeadingStyle() {
     return headingStyle;

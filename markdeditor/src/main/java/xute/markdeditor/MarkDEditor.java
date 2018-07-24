@@ -3,6 +3,7 @@ package xute.markdeditor;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -64,6 +65,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     textComponentItem.setTag(componentTag);
     addView(textComponentItem, insertIndex);
     setFocus(textComponentItem);
+    reComputeTagsAfter(insertIndex);
     refreshViewOrder();
   }
 
@@ -72,7 +74,6 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   @Override
   public void onInsertTextComponent(int selfIndex) {
     addTextComponent(selfIndex + 1);
-    reComputeTagsAfter(selfIndex);
   }
 
   @Override
@@ -166,6 +167,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
    * @param heading number to be set
    */
   public void setHeading(int heading) {
+    Log.d("Editor", "setting heading " + heading);
     currentInputMode = MODE_PLAIN;
     if (_activeView instanceof TextComponentItem) {
       ((TextComponentItem) _activeView).setMode(currentInputMode);
@@ -226,15 +228,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     //add another text component below image
     insertIndex++;
     currentInputMode = MODE_PLAIN;
-    TextComponentItem textComponentItem = __textComponent.newTextComponent(currentInputMode);
-    //prepare tag
-    TextComponentModel textComponentModel = new TextComponentModel();
-    ComponentTag componentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
-    componentTag.setComponent(textComponentModel);
-    textComponentItem.setTag(componentTag);
-    addView(textComponentItem, insertIndex);
-    reComputeTagsAfter(insertIndex);
-    setFocus(textComponentItem);
+    addTextComponent(insertIndex);
   }
 
   private int checkInvalidateAndCalculateInsertIndex() {
@@ -269,15 +263,8 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     //add another text component below image
     insertIndex++;
     currentInputMode = MODE_PLAIN;
-    TextComponentItem textComponentItem = __textComponent.newTextComponent(currentInputMode);
-    //prepare tag
-    TextComponentModel textComponentModel = new TextComponentModel();
-    ComponentTag componentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
-    componentTag.setComponent(textComponentModel);
-    textComponentItem.setTag(componentTag);
-    addView(textComponentItem, insertIndex);
-    reComputeTagsAfter(insertIndex);
-    setFocus(textComponentItem);
+    addTextComponent(insertIndex);
+    refreshViewOrder();
   }
 
   private int getNextIndex() {

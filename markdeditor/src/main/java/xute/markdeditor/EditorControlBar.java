@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -62,7 +63,7 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
     enabledColor = Color.parseColor("#0994cf");
     disabledColor = Color.parseColor("#3e3e3e");
 
-    normalTextBtn.setTextColor(disabledColor);
+    normalTextBtn.setTextColor(enabledColor);
     headingBtn.setTextColor(disabledColor);
     headingNumberBtn.setTextColor(disabledColor);
     bulletBtn.setColorFilter(disabledColor);
@@ -225,12 +226,12 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
     if (mode == MODE_OL) {
       enableBlockquote(false);
       enableHeading(false, 1);
-      enableNormalText(true);
+      enableNormalText(false);
       enableBullet(true, true);
     } else if (mode == MODE_UL) {
       enableBlockquote(false);
       enableHeading(false, 1);
-      enableNormalText(true);
+      enableNormalText(false);
       enableBullet(true, false);
     } else if (mode == MODE_PLAIN) {
       if (textComponentStyle == H1) {
