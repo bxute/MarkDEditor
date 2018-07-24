@@ -25,12 +25,25 @@ public class MarkDCore extends LinearLayout {
     bulletGroupModels = new ArrayList<>();
   }
 
+  /**
+   * Creates bullet groups and invalidate the view.
+   */
   protected void refreshViewOrder() {
     makeBulletGroups();
     invalidateComponentMode(bulletGroupModels);
   }
 
 
+  /**
+   * This method find the group of bullets.
+   * There can be 2 type of group.
+   * {UL,StartIndex=0,EndIndex=3}
+   * and
+   * {OL,StartIndex=5,EndIndex=9}
+   * <p>
+   * These group are useful for maintaining correct order
+   * even when view are inserted and deleted in any way.
+   */
   private void makeBulletGroups() {
     bulletGroupModels.clear();
     int startIndex;
@@ -66,6 +79,12 @@ public class MarkDCore extends LinearLayout {
     }
   }
 
+  /**
+   * Helper method to update the bullets.
+   * If view are inserted/removed, bullets are reassigned to view,
+   * so we need to update the view.
+   * @param bulletGroupModels list of groups of bullets.
+   */
   private void invalidateComponentMode(ArrayList<BulletGroupModel> bulletGroupModels) {
     int ot;
     int si;
@@ -82,7 +101,7 @@ public class MarkDCore extends LinearLayout {
         for (int j = si; j <= ei; j++) {
           _tempChild = (TextComponentItem) getChildAt(j);
           _tempChild.setMode(MODE_OL);
-          _tempChild.setIndicator(ci + ". ");
+          _tempChild.setIndicator(ci + ".");
           ci++;
         }
       }

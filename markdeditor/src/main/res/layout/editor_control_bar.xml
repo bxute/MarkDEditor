@@ -141,6 +141,7 @@
             android:clickable="true"
             android:padding="10dp"
             android:src="@drawable/image" />
+
     </FrameLayout>
 
 </RelativeLayout>

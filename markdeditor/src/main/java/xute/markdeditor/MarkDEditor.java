@@ -21,6 +21,7 @@ import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.ComponentMetadataHelper;
 
 import static xute.markdeditor.Styles.TextComponentStyle.BLOCKQUOTE;
+import static xute.markdeditor.Styles.TextComponentStyle.H1;
 import static xute.markdeditor.Styles.TextComponentStyle.NORMAL;
 import static xute.markdeditor.components.TextComponentItem.MODE_OL;
 import static xute.markdeditor.components.TextComponentItem.MODE_PLAIN;
@@ -49,6 +50,8 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     __imageComponent = new ImageComponent(context);
     __horizontalComponent = new HorizontalDividerComponent(context);
     addTextComponent(0);
+    //enable H1 be default
+    setHeading(H1);
   }
 
   /**
@@ -64,6 +67,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     componentTag.setComponent(textComponentModel);
     textComponentItem.setTag(componentTag);
     addView(textComponentItem, insertIndex);
+    __textComponent.updateComponent(textComponentItem);
     setFocus(textComponentItem);
     reComputeTagsAfter(insertIndex);
     refreshViewOrder();
@@ -81,6 +85,12 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     setFocus(view);
   }
 
+  /**
+   * This callback method removes view at given index.
+   * It checks if there is a horizontal line just before it, it removes the line too.
+   * Else it removes the current view only.
+   * @param selfIndex index of view to remove.
+   */
   @Override
   public void onRemoveTextComponent(int selfIndex) {
     if (selfIndex == 0)
@@ -106,6 +116,12 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     refreshViewOrder();
   }
 
+  /**
+   * This method searches whithin view group for a TextComponent which was
+   * inserted prior to startIndex.
+   * @param starIndex index from which search starts.
+   * @return index of LatestTextComponent before startIndex.
+   */
   private int getLatestTextComponentIndexBefore(int starIndex) {
     View view = null;
     for (int i = starIndex; i >= 0; i--) {
@@ -192,6 +208,10 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     refreshViewOrder();
   }
 
+  /**
+   * change the current insert mode to Ordered List Mode.
+   * Increasing numbers are used to denote each item.
+   */
   public void changeToOLMode() {
     currentInputMode = MODE_OL;
     if (_activeView instanceof TextComponentItem) {
@@ -203,6 +223,10 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     refreshViewOrder();
   }
 
+  /**
+   * change the current insert mode to UnOrdered List Mode.
+   * Circular filled bullets are used to denote each item.
+   */
   public void changeToULMode() {
     currentInputMode = MODE_UL;
     if (_activeView instanceof TextComponentItem) {
@@ -214,6 +238,15 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     refreshViewOrder();
   }
 
+  /**
+   * This method gets the suitable insert index using
+   * `checkInvalidateAndCalculateInsertIndex()` method.
+   * Prepares the ImageComponent and inserts it.
+   * Since the user might need to type further, it inserts new TextComponent below
+   * it.
+   *
+   * @param filePath uri of image to be inserted.
+   */
   public void insertImage(String filePath) {
     int insertIndex = checkInvalidateAndCalculateInsertIndex();
     ImageComponentItem imageComponentItem = __imageComponent.getNewImageComponentItem(filePath, this);
@@ -231,6 +264,15 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     addTextComponent(insertIndex);
   }
 
+  /**
+   * This method checks the current active/focussed view.
+   * If there is some text in it, then next insertion will take place below this
+   * view.
+   * Else the current focussed view will be removed and new view will inserted
+   * at its position.
+   *
+   * @return index of next insert.
+   */
   private int checkInvalidateAndCalculateInsertIndex() {
     ComponentTag tag = (ComponentTag) _activeView.getTag();
     int activeIndex = tag.getComponentIndex();
@@ -253,6 +295,9 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     return activeIndex + 1;
   }
 
+  /**
+   * inserts new horizontal ruler.
+   */
   public void insertHorizontalDivider() {
     int insertIndex = getNextIndex();
     HorizontalDividerComponentItem horizontalDividerComponentItem = __horizontalComponent.getNewHorizontalComponentItem();
@@ -267,6 +312,9 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     refreshViewOrder();
   }
 
+  /**
+   * @return index next to focussed view.
+   */
   private int getNextIndex() {
     ComponentTag tag = (ComponentTag) _activeView.getTag();
     return tag.getComponentIndex() + 1;
@@ -285,13 +333,8 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     refreshViewOrder();
   }
 
-  private void reportStylesOfFocusedView(TextComponentItem view) {
-    if (editorFocusReporter != null) {
-      editorFocusReporter.onFocusedViewHas(view.getMode(), view.getTextHeadingStyle());
-    }
-  }
-
   /**
+   * overloaded method for focusing view, it puts the cursor at specified position.
    * @param view to be focused on.
    */
   private void setFocus(View view, int cursorPos) {
@@ -307,6 +350,21 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     }
   }
 
+  /**
+   * method to send callback for focussed view back to subscriber(if any).
+   *
+   * @param view newly focus view.
+   */
+  private void reportStylesOfFocusedView(TextComponentItem view) {
+    if (editorFocusReporter != null) {
+      editorFocusReporter.onFocusedViewHas(view.getMode(), view.getTextHeadingStyle());
+    }
+  }
+
+  /**
+   * setter method to subscribe for listening to focus change.
+   * @param editorFocusReporter callback for editor focus.
+   */
   public void setEditorFocusReporter(EditorFocusReporter editorFocusReporter) {
     this.editorFocusReporter = editorFocusReporter;
   }

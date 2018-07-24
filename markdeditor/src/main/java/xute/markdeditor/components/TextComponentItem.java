@@ -19,7 +19,7 @@ public class TextComponentItem extends FrameLayout {
   public static final int MODE_UL = 1;
   public static final int MODE_OL = 2;
 
-  public static final String UL_BULLET = "\u25CF";
+  public static final String UL_BULLET = "\u2022";
   TextView indicator;
   EditText text;
   private int mEditorMode;

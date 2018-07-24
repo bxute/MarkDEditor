@@ -31,16 +31,16 @@ public class TextComponent {
     _textComponentCallback = textComponentCallback;
   }
 
+  /**
+   * Method to create new instance according to mode provided.
+   * Mode can be [PLAIN, UL, OL]
+   * @param mode mode of new TextComponent.
+   * @return new instance of TextComponent.
+   */
   public TextComponentItem newTextComponent(final int mode) {
     final TextComponentItem customInput = new TextComponentItem(mContext, mode);
     final EditText et = customInput.getInputBox();
     et.setImeActionLabel("Enter", KeyEvent.KEYCODE_ENTER);
-    et.setPadding(
-     getPxFromSp(8),
-     getPxFromSp(4),
-     getPxFromSp(8),
-     getPxFromSp(4)
-    );
     et.setOnKeyListener(new View.OnKeyListener() {
       @Override
       public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
@@ -93,10 +93,10 @@ public class TextComponent {
     return customInput;
   }
 
-  private int getPxFromSp(int sp) {
-    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, r.getDisplayMetrics());
-  }
-
+  /**
+   * updates view with latest style info.
+   * @param view to be updated.
+   */
   public void updateComponent(View view) {
     ComponentTag componentTag = (ComponentTag) view.getTag();
     //check heading
@@ -106,17 +106,47 @@ public class TextComponent {
     if (style >= H1 && style <= H5) {
       ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.BOLD);
       (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.text_input_bg);
+      ((TextComponentItem) view).getInputBox().setPadding(
+       dpToPx(12),//left
+       dpToPx(12),//top
+       dpToPx(12),//right
+       dpToPx(12)//bottom
+      );
+      ((TextComponentItem) view).getInputBox().setLineSpacing(2f,1.1f);
     }
 
     if (style == NORMAL) {
       ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.NORMAL);
       (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.text_input_bg);
+      ((TextComponentItem) view).getInputBox().setPadding(
+       dpToPx(12),//left
+       dpToPx(8),//top
+       dpToPx(12),//right
+       dpToPx(8)//bottom
+      );
+      ((TextComponentItem) view).getInputBox().setLineSpacing(2f,1.1f);
     }
 
     if (style == BLOCKQUOTE) {
-      ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.NORMAL);
+      ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.ITALIC);
       (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.blockquote_component_bg);
+      ((TextComponentItem) view).getInputBox().setPadding(
+       dpToPx(18),//left
+       dpToPx(16),//top
+       dpToPx(18),//right
+       dpToPx(16)//bottom
+      );
+      ((TextComponentItem) view).getInputBox().setLineSpacing(2f,1.2f);
     }
+  }
+
+  /**
+   * Convert dp to px value.
+   * @param dp value
+   * @return pixel value of given dp.
+   */
+  private int dpToPx(int dp) {
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, dp, r.getDisplayMetrics());
   }
 
   public interface TextComponentCallback {
