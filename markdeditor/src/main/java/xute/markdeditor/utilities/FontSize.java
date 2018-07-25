@@ -13,8 +13,8 @@ public class FontSize {
   public static final int H2_SIZE = 28;
   public static final int H3_SIZE = 24;
   public static final int H4_SIZE = 22;
-  public static final int H5_SIZE = 18;
-  public static final int NORMAL = 18;
+  public static final int H5_SIZE = 20;
+  public static final int NORMAL = 20;
 
   public static int getFontSize(int heading) {
     switch (heading) {

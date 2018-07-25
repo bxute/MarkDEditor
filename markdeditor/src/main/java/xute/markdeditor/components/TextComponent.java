@@ -19,6 +19,7 @@ import static xute.markdeditor.Styles.TextComponentStyle.BLOCKQUOTE;
 import static xute.markdeditor.Styles.TextComponentStyle.H1;
 import static xute.markdeditor.Styles.TextComponentStyle.H5;
 import static xute.markdeditor.Styles.TextComponentStyle.NORMAL;
+import static xute.markdeditor.components.TextComponentItem.MODE_PLAIN;
 
 public class TextComponent {
   private final Context mContext;
@@ -134,17 +135,20 @@ public class TextComponent {
    */
   public void updateComponent(View view) {
     ComponentTag componentTag = (ComponentTag) view.getTag();
-    //check heading
+    //get heading
     int style = ((TextComponentModel) componentTag.getComponent()).getHeadingStyle();
-    ((TextComponentItem) view).getInputBox().setTextSize(FontSize.getFontSize(style));
+    TextComponentItem textComponentItem = (TextComponentItem) view;
+    textComponentItem.getInputBox().setTextSize(FontSize.getFontSize(style));
+    //get mode
+    int mode = textComponentItem.getMode();
 
     if (style >= H1 && style <= H5) {
       ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.BOLD);
       (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.text_input_bg);
       ((TextComponentItem) view).getInputBox().setPadding(
-       dpToPx(12),//left
+       dpToPx(16),//left
        dpToPx(8),//top
-       dpToPx(12),//right
+       dpToPx(16),//right
        dpToPx(8)//bottom
       );
       ((TextComponentItem) view).getInputBox().setLineSpacing(2f,1.1f);
@@ -153,12 +157,21 @@ public class TextComponent {
     if (style == NORMAL) {
       ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.NORMAL);
       (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.text_input_bg);
-      ((TextComponentItem) view).getInputBox().setPadding(
-       dpToPx(12),//left
-       dpToPx(4),//top
-       dpToPx(12),//right
-       dpToPx(4)//bottom
-      );
+      if (mode == MODE_PLAIN) {
+        ((TextComponentItem) view).getInputBox().setPadding(
+         dpToPx(16),//left
+         dpToPx(4),//top
+         dpToPx(16),//right
+         dpToPx(4)//bottom
+        );
+      } else {
+        ((TextComponentItem) view).getInputBox().setPadding(
+         dpToPx(4),//left
+         dpToPx(4),//top
+         dpToPx(16),//right
+         dpToPx(4)//bottom
+        );
+      }
       ((TextComponentItem) view).getInputBox().setLineSpacing(2f,1.1f);
     }
 
@@ -166,10 +179,10 @@ public class TextComponent {
       ((TextComponentItem) view).getInputBox().setTypeface(null, Typeface.ITALIC);
       (((TextComponentItem) view).getInputBox()).setBackgroundResource(R.drawable.blockquote_component_bg);
       ((TextComponentItem) view).getInputBox().setPadding(
-       dpToPx(18),//left
-       dpToPx(16),//top
-       dpToPx(18),//right
-       dpToPx(16)//bottom
+       dpToPx(16),//left
+       dpToPx(2),//top
+       dpToPx(16),//right
+       dpToPx(2)//bottom
       );
       ((TextComponentItem) view).getInputBox().setLineSpacing(2f,1.2f);
     }

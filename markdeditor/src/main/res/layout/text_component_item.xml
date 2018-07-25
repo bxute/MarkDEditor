@@ -13,16 +13,15 @@
         android:textSize="16sp"
         android:gravity="center"
         android:text="1"
-        android:background="#ffffff"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="0dp"
         android:layout_width="24dp"
         android:layout_height="24dp" />
 
     <EditText
         android:background="@drawable/blockquote_component_bg"
         android:id="@+id/text"
-        android:hint="type here..."
+        android:hint="Type here..."
         android:textSize="16sp"
         android:textColorHint="#cacaca"
         android:paddingStart="4dp"
