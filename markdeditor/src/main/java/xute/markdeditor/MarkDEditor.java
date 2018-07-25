@@ -110,7 +110,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
       setFocus(getChildAt(lastTextComponent));
     } else if (previousView instanceof TextComponentItem) {
       int contentLen = ((TextComponentItem) previousView).getInputBox().getText().toString().length();
-      ((TextComponentItem) previousView).getInputBox().append(String.format(" %s", content));
+      ((TextComponentItem) previousView).getInputBox().append(String.format("%s", content));
       setFocus(previousView, contentLen);
     }
     refreshViewOrder();

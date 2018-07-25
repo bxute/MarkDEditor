@@ -24,6 +24,7 @@ public class TextComponent {
   private final Context mContext;
   private TextComponentCallback _textComponentCallback;
   private Resources r;
+  private boolean spaceExist;
 
   public TextComponent(Context context, TextComponentCallback textComponentCallback) {
     this.mContext = context;
@@ -69,15 +70,44 @@ public class TextComponent {
     et.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
       }
 
       @Override
       public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-        if (charSequence.length() > 1) {
+        int clen = charSequence.length();
+
+        if (clen > 0) {
           char ch = charSequence.charAt(charSequence.length() - 1);
-          if (ch == '\n') {
-            et.setText(charSequence.subSequence(0, charSequence.length() - 1));
+          if (isSpaceCharacter(ch) && (before < count)) {
+            if (spaceExist) {
+              String newString = charSequence.toString().trim();
+              newString = String.format("%s ", newString);
+              et.setText(newString);
+              et.setSelection(newString.length());
+            }
+            spaceExist = true;
+          } else {
+            spaceExist = false;
+          }
+
+          String sequenceToCheckNewLineCharacter = (clen > 1) ? charSequence.subSequence(clen - 2, clen).toString()
+           :
+           charSequence.subSequence(clen - 1, clen).toString();
+          boolean noReadableCharactersAfterCursor = sequenceToCheckNewLineCharacter.trim().length() == 0;
+          //if last characters are [AB\n<space>] or [AB\n] then we insert new TextComponent
+          //else if last characters are [AB\nC] ignore the insert.
+          if (sequenceToCheckNewLineCharacter.contains("\n") && noReadableCharactersAfterCursor) {
+
+            //If last characters are like [AB\n ] then new sequence will be [AB]
+            // i.e leave 2 characters from end.
+            //else if last characters are like [AB\n] then also new sequence will be [AB]
+            //but we need to leave 1 character from end.
+            CharSequence newSequence = sequenceToCheckNewLineCharacter.length() > 1 ?
+             charSequence.subSequence(0, clen - 2)
+             :
+             charSequence.subSequence(0, clen - 1);
+
+            et.setText(newSequence);
             if (_textComponentCallback != null) {
               _textComponentCallback.onInsertTextComponent(((ComponentTag) customInput.getTag()).getComponentIndex());
             }
@@ -90,7 +120,12 @@ public class TextComponent {
 
       }
     });
+
     return customInput;
+  }
+
+  private boolean isSpaceCharacter(char ch) {
+    return ch == ' ';
   }
 
   /**
