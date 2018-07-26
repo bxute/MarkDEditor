@@ -3,9 +3,6 @@ apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.bxute'
 android {
     compileSdkVersion 27
-
-
-
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 27
