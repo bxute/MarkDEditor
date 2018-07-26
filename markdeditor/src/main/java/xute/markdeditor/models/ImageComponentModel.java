@@ -19,4 +19,12 @@ public class ImageComponentModel extends BaseComponentModel {
   public void setCaption(String caption) {
     this.caption = caption;
   }
+
+  @Override
+  public String toString() {
+    return "ImageComponentModel{" +
+     "url='" + url + '\'' +
+     ", caption='" + caption + '\'' +
+     '}';
+  }
 }

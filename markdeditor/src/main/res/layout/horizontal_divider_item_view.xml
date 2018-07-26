@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
     <View
-        android:background="#b7b7b7"
+        android:background="#e6e6e6"
         android:layout_width="wrap_content"
         android:layout_height="1dp" />
 

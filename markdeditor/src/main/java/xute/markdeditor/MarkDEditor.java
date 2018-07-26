@@ -19,6 +19,7 @@ import xute.markdeditor.models.ComponentTag;
 import xute.markdeditor.models.ImageComponentModel;
 import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.ComponentMetadataHelper;
+import xute.markdeditor.utilities.MarkDownConverter;
 
 import static xute.markdeditor.Styles.TextComponentStyle.BLOCKQUOTE;
 import static xute.markdeditor.Styles.TextComponentStyle.H1;
@@ -37,6 +38,8 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   private ImageComponent __imageComponent;
   private HorizontalDividerComponent __horizontalComponent;
   private int currentInputMode;
+  private MarkDownConverter markDownConverter;
+
   public MarkDEditor(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
     init(context);
@@ -45,6 +48,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   private void init(Context context) {
     this.mContext = context;
     bulletGroupModels = new ArrayList<>();
+    markDownConverter = new MarkDownConverter();
     currentInputMode = MODE_PLAIN;
     __textComponent = new TextComponent(context, this);
     __imageComponent = new ImageComponent(context);
@@ -361,6 +365,12 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     }
   }
 
+  /**
+   * @return markdown format of editor content.
+   */
+  public String getMarkdownContent() {
+    return markDownConverter.convertToMarkdown(this);
+  }
   /**
    * setter method to subscribe for listening to focus change.
    * @param editorFocusReporter callback for editor focus.

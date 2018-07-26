@@ -3,6 +3,8 @@ package xute.markdeditor.components;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import xute.markdeditor.R;
 import xute.markdeditor.api.ImageUploader;
 import xute.markdeditor.models.ComponentTag;
+import xute.markdeditor.models.ImageComponentModel;
 import xute.markdeditor.utilities.ImageHelper;
 
 public class ImageComponentItem extends FrameLayout implements ImageUploader.ImageUploadCallback {
@@ -84,6 +87,23 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
         }
       }
     });
+
+    captionEt.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+      }
+
+      @Override
+      public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        setCaption(charSequence.toString());
+      }
+
+      @Override
+      public void afterTextChanged(Editable editable) {
+
+      }
+    });
   }
 
   public void setFilePath(String filePath) {
@@ -126,8 +146,10 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     return downloadUrl;
   }
 
-  public void setDownloadUrl(String downloadUrl) {
-    this.downloadUrl = downloadUrl;
+  public void setCaption(String caption) {
+    this.caption = caption;
+    ComponentTag tag = (ComponentTag) getTag();
+    ((ImageComponentModel) tag.getComponent()).setCaption(caption);
   }
 
   public void setFocus() {
@@ -138,8 +160,11 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     return caption;
   }
 
-  public void setCaption(String caption) {
-    this.caption = caption;
+  public void setDownloadUrl(String downloadUrl) {
+    this.downloadUrl = downloadUrl;
+    ComponentTag tag = (ComponentTag) getTag();
+    ((ImageComponentModel) tag.getComponent()).setUrl(downloadUrl);
+
   }
 
   @Override
@@ -170,7 +195,7 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
         retryUpload.setVisibility(GONE);
         imageUploadProgressBar.setVisibility(GONE);
       }
-    }, 4000);
+    }, 2000);
   }
 
   @Override

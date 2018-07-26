@@ -22,4 +22,15 @@
        android:layout_alignParentBottom="true"
        android:layout_width="match_parent"
        android:layout_height="48dp" />
+
+   <Button
+       android:onClick="printStack"
+       android:layout_marginBottom="56dp"
+       android:layout_marginEnd="8dp"
+       android:text="MAIL MD"
+       android:layout_alignParentBottom="true"
+       android:layout_alignParentEnd="true"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
+
 </RelativeLayout>

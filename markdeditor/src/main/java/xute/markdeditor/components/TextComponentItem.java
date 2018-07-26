@@ -20,9 +20,10 @@ public class TextComponentItem extends FrameLayout {
   public static final int MODE_OL = 2;
 
   public static final String UL_BULLET = "\u2022";
-  TextView indicator;
-  EditText text;
+  TextView indicatorTv;
+  EditText editText;
   private int mEditorMode;
+  private String indicatorText;
 
   public TextComponentItem(@NonNull Context context) {
     super(context);
@@ -31,8 +32,8 @@ public class TextComponentItem extends FrameLayout {
 
   private void init(Context context, int mode) {
     View view = LayoutInflater.from(context).inflate(R.layout.text_component_item, this);
-    indicator = view.findViewById(R.id.indicator);
-    text = view.findViewById(R.id.text);
+    indicatorTv = view.findViewById(R.id.indicator);
+    editText = view.findViewById(R.id.text);
     this.mEditorMode = mode;
     setMode(mode);
   }
@@ -47,16 +48,27 @@ public class TextComponentItem extends FrameLayout {
     init(context, MODE_PLAIN);
   }
 
-  public void setIndicator(String bullet) {
-    indicator.setText(bullet);
+  public void setMode(int mode) {
+    this.mEditorMode = mode;
+    if (mode == MODE_PLAIN) {
+      indicatorTv.setVisibility(GONE);
+      editText.setBackgroundResource(R.drawable.text_input_bg);
+    } else if (mode == MODE_UL) {
+      indicatorTv.setText(UL_BULLET);
+      indicatorTv.setVisibility(VISIBLE);
+      editText.setBackgroundResource(R.drawable.text_input_bg);
+    } else if (mode == MODE_OL) {
+      indicatorTv.setVisibility(VISIBLE);
+      editText.setBackgroundResource(R.drawable.text_input_bg);
+    }
   }
 
   public void setText(String content) {
-    text.setText(content);
+    editText.setText(content);
   }
 
   public EditText getInputBox() {
-    return text;
+    return editText;
   }
 
   public int getMode() {
@@ -69,18 +81,16 @@ public class TextComponentItem extends FrameLayout {
     return ((TextComponentModel) componentTag.getComponent()).getHeadingStyle();
   }
 
-  public void setMode(int mode) {
-    this.mEditorMode = mode;
-    if (mode == MODE_PLAIN) {
-      indicator.setVisibility(GONE);
-      text.setBackgroundResource(R.drawable.text_input_bg);
-    } else if (mode == MODE_UL) {
-      indicator.setText(UL_BULLET);
-      indicator.setVisibility(VISIBLE);
-      text.setBackgroundResource(R.drawable.text_input_bg);
-    } else if (mode == MODE_OL) {
-      indicator.setVisibility(VISIBLE);
-      text.setBackgroundResource(R.drawable.text_input_bg);
-    }
+  public void setIndicator(String bullet) {
+    indicatorTv.setText(bullet);
+    this.indicatorText = bullet;
+  }
+
+  public String getIndicatorText() {
+    return indicatorText;
+  }
+
+  public String getContent() {
+    return editText.getText().toString();
   }
 }

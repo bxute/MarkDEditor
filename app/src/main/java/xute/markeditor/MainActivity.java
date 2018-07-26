@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import xute.markdeditor.EditorControlBar;
 import xute.markdeditor.MarkDEditor;
@@ -83,5 +84,20 @@ public class MainActivity extends AppCompatActivity implements EditorControlBar.
   @Override
   public void onInserLinkClicked() {
     markDEditor.addLink("Click Here", "http://www.hapramp.com");
+  }
+
+  public void printStack(View view) {
+    sendMail();
+  }
+
+  private void sendMail() {
+    String md = markDEditor.getMarkdownContent();
+    final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+    emailIntent.setType("text/plain");
+    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"ankit.kumar071460@gmail.com"});
+    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Generated Markdown");
+    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, md);
+    startActivity(Intent.createChooser(emailIntent,
+     "Send email using..."));
   }
 }

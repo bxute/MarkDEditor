@@ -37,7 +37,7 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
   private int enabledColor;
   private int disabledColor;
 
-  private int currentHeading = 0;
+  private int currentHeading = 1;
   private boolean olEnabled;
   private boolean ulEnabled;
   private boolean blockquoteEnabled;
@@ -63,9 +63,9 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
     enabledColor = Color.parseColor("#0994cf");
     disabledColor = Color.parseColor("#3e3e3e");
 
-    normalTextBtn.setTextColor(enabledColor);
-    headingBtn.setTextColor(disabledColor);
-    headingNumberBtn.setTextColor(disabledColor);
+    normalTextBtn.setTextColor(disabledColor);
+    headingBtn.setTextColor(enabledColor);
+    headingNumberBtn.setTextColor(enabledColor);
     bulletBtn.setColorFilter(disabledColor);
     blockQuoteBtn.setColorFilter(disabledColor);
     linkBtn.setColorFilter(disabledColor);
@@ -193,6 +193,7 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
       headingNumberBtn.setTextColor(enabledColor);
       headingNumberBtn.setText(String.valueOf(headingNumber));
     } else {
+      currentHeading = 0;
       headingBtn.setTextColor(disabledColor);
       headingNumberBtn.setTextColor(disabledColor);
       headingNumberBtn.setText("1");
