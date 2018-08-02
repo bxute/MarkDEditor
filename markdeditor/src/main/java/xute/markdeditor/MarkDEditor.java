@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import xute.markdeditor.components.HorizontalDividerComponent;
 import xute.markdeditor.components.HorizontalDividerComponentItem;
@@ -369,7 +370,22 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
    * @return markdown format of editor content.
    */
   public String getMarkdownContent() {
-    return markDownConverter.convertToMarkdown(this);
+    if (markDownConverter.isDataProcessed()) {
+      return markDownConverter.getMarkDown();
+    } else {
+      return markDownConverter.processData(this).getMarkDown();
+    }
+  }
+
+  /**
+   * @return list of images inserted.
+   */
+  public List<String> getImageList() {
+    if (markDownConverter.isDataProcessed()) {
+      return markDownConverter.getImages();
+    } else {
+      return markDownConverter.processData(this).getImages();
+    }
   }
   /**
    * setter method to subscribe for listening to focus change.

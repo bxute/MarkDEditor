@@ -28,7 +28,7 @@ Your editor will look something like:
 Step 2. Add the dependency
 ```groovy
 dependencies {
-  implementation 'com.github.bxute:MarkDEditor:v0.1'
+  implementation 'com.github.bxute:MarkDEditor:v0.2'
 }
 ```
 
@@ -91,6 +91,11 @@ markDEditor.insertImage(filePath);
 **Getting Markdown from Editor**
 ```java
 String md = markDEditor.getMarkdownContent();
+```
+
+**Getting List of Images**
+```java
+List<String> images = markDEditor.getImageList();
 ```
 
 
