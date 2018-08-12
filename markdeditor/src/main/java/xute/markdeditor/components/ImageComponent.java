@@ -1,7 +1,6 @@
 package xute.markdeditor.components;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 public class ImageComponent {
   private Context context;
@@ -10,10 +9,10 @@ public class ImageComponent {
     this.context = context;
   }
 
-  public ImageComponentItem getNewImageComponentItem(String filePath, ImageComponentItem.ImageRemoveListener imageRemoveListener) {
+  public ImageComponentItem getNewImageComponentItem(String filePath, String serverToken, ImageComponentItem.ImageRemoveListener imageRemoveListener) {
     ImageComponentItem imageComponentItem = new ImageComponentItem(context);
     imageComponentItem.setImageRemoveListener(imageRemoveListener);
-    imageComponentItem.setFilePath(filePath);
+    imageComponentItem.setFilePath(filePath, serverToken);
     return imageComponentItem;
   }
 }

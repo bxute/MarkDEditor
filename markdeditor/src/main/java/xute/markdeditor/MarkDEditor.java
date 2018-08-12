@@ -40,6 +40,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   private HorizontalDividerComponent __horizontalComponent;
   private int currentInputMode;
   private MarkDownConverter markDownConverter;
+  private String serverToken;
 
   public MarkDEditor(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -57,6 +58,10 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     addTextComponent(0);
     //enable H1 be default
     setHeading(H1);
+  }
+
+  public void setImageServerToken(String serverToken) {
+    this.serverToken = serverToken;
   }
 
   /**
@@ -254,7 +259,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
    */
   public void insertImage(String filePath) {
     int insertIndex = checkInvalidateAndCalculateInsertIndex();
-    ImageComponentItem imageComponentItem = __imageComponent.getNewImageComponentItem(filePath, this);
+    ImageComponentItem imageComponentItem = __imageComponent.getNewImageComponentItem(filePath, serverToken, this);
     //prepare tag
     ImageComponentModel imageComponentModel = new ImageComponentModel();
     ComponentTag imageComponentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);

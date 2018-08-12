@@ -34,7 +34,6 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
   private String caption;
   private String filePath;
   private ImageUploader imageUploader;
-  private String serverToken = "gajeel";
   private Context mContext;
   private ImageRemoveListener imageRemoveListener;
   private OnClickListener imageClickListener = new OnClickListener() {
@@ -50,6 +49,7 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
       hideExtraInfroWithDelay();
     }
   };
+  private String serverToken;
 
   public ImageComponentItem(@NonNull Context context) {
     super(context);
@@ -75,7 +75,7 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     retryUpload.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        setFilePath(filePath);
+        setFilePath(filePath, serverToken);
       }
     });
 
@@ -106,7 +106,8 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     });
   }
 
-  public void setFilePath(String filePath) {
+  public void setFilePath(String filePath, String serverToken) {
+    this.serverToken = serverToken;
     ImageHelper.load(mContext, imageView, filePath);
     this.filePath = filePath;
     imageUploading = true;
