@@ -41,6 +41,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
   private int currentInputMode;
   private MarkDownConverter markDownConverter;
   private String serverToken;
+  private static String serverUrl;
 
   public MarkDEditor(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -60,10 +61,14 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     setHeading(H1);
   }
 
-  public void setImageServerToken(String serverToken) {
+  public void setServerInfo(String serverUrl, String serverToken) {
     this.serverToken = serverToken;
+    this.serverUrl = serverUrl;
   }
 
+  public static String getServerUrl(){
+    return serverUrl;
+  }
   /**
    * adds new TextComponent.
    *

@@ -9,9 +9,9 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import xute.markdeditor.MarkDEditor;
 
 public class RetrofitApiClient {
-  public static final String BASE_URL = "http://hapramp2.herokuapp.com/api/v2/";
   private static Retrofit retrofit = null;
 
   public static Retrofit getClient(final String token) {
@@ -33,7 +33,7 @@ public class RetrofitApiClient {
      .build();
 
     retrofit = new Retrofit.Builder()
-     .baseUrl(BASE_URL)
+     .baseUrl(MarkDEditor.getServerUrl())
      .addConverterFactory(GsonConverterFactory.create())
      .client(client)
      .build();
