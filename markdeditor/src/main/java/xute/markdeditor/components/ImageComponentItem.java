@@ -26,7 +26,7 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
   ProgressBar imageUploadProgressBar;
   ImageView retryUpload;
   TextView statusMessage;
-  TextView removeImageButton;
+  ImageView removeImageButton;
 
   private boolean imageUploaded;
   private boolean imageUploading;

@@ -23,7 +23,6 @@ import xute.markdeditor.utilities.ComponentMetadataHelper;
 import xute.markdeditor.utilities.MarkDownConverter;
 
 import static xute.markdeditor.Styles.TextComponentStyle.BLOCKQUOTE;
-import static xute.markdeditor.Styles.TextComponentStyle.H1;
 import static xute.markdeditor.Styles.TextComponentStyle.NORMAL;
 import static xute.markdeditor.components.TextComponentItem.MODE_OL;
 import static xute.markdeditor.components.TextComponentItem.MODE_PLAIN;
@@ -57,8 +56,7 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     __imageComponent = new ImageComponent(context);
     __horizontalComponent = new HorizontalDividerComponent(context);
     addTextComponent(0);
-    //enable H1 be default
-    setHeading(H1);
+    setHeading(NORMAL);
   }
 
   public void setServerInfo(String serverUrl, String serverToken) {

@@ -63,9 +63,9 @@ public class EditorControlBar extends FrameLayout implements MarkDEditor.EditorF
     enabledColor = Color.parseColor("#0994cf");
     disabledColor = Color.parseColor("#3e3e3e");
 
-    normalTextBtn.setTextColor(disabledColor);
-    headingBtn.setTextColor(enabledColor);
-    headingNumberBtn.setTextColor(enabledColor);
+    normalTextBtn.setTextColor(enabledColor);
+    headingBtn.setTextColor(disabledColor);
+    headingNumberBtn.setTextColor(disabledColor);
     bulletBtn.setColorFilter(disabledColor);
     blockQuoteBtn.setColorFilter(disabledColor);
     linkBtn.setColorFilter(disabledColor);
