@@ -35,7 +35,7 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
   private String filePath;
   private ImageUploader imageUploader;
   private Context mContext;
-  private ImageRemoveListener imageRemoveListener;
+  private ImageComponentListener imageComponentListener;
   private OnClickListener imageClickListener = new OnClickListener() {
     @Override
     public void onClick(View view) {
@@ -82,8 +82,8 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     removeImageButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        if (imageRemoveListener != null) {
-          imageRemoveListener.onImageRemove(getSelfIndex());
+        if (imageComponentListener != null) {
+          imageComponentListener.onImageRemove(getSelfIndex());
         }
       }
     });
@@ -96,6 +96,7 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
 
       @Override
       public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        checkReturnPressToInsertNewTextComponent(charSequence);
         setCaption(charSequence.toString());
       }
 
@@ -106,6 +107,22 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     });
   }
 
+  private void checkReturnPressToInsertNewTextComponent(CharSequence charSequence) {
+    int clen = charSequence.length();
+    if (clen > 0) {
+      String sequenceToCheckNewLineCharacter = (clen > 1) ? charSequence.subSequence(clen - 2, clen).toString()
+       :
+       charSequence.subSequence(clen - 1, clen).toString();
+      boolean noReadableCharactersAfterCursor = sequenceToCheckNewLineCharacter.trim().length() == 0;
+      //if last characters are [AB\n<space>] or [AB\n] then we insert new TextComponent
+      //else if last characters are [AB\nC] ignore the insert.
+      if (sequenceToCheckNewLineCharacter.contains("\n") && noReadableCharactersAfterCursor) {
+        if (imageComponentListener != null) {
+          imageComponentListener.onExitFromCaptionAndInsertNewTextComponent(getSelfIndex() + 1);
+        }
+      }
+    }
+  }
   public void setFilePath(String filePath, String serverToken) {
     this.serverToken = serverToken;
     ImageHelper.load(mContext, imageView, filePath);
@@ -217,11 +234,13 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     imageView.setOnClickListener(null);
   }
 
-  public void setImageRemoveListener(ImageRemoveListener imageRemoveListener) {
-    this.imageRemoveListener = imageRemoveListener;
+  public void setImageComponentListener(ImageComponentListener imageComponentListener) {
+    this.imageComponentListener = imageComponentListener;
   }
 
-  public interface ImageRemoveListener {
+  public interface ImageComponentListener {
     void onImageRemove(int removeIndex);
+
+    void onExitFromCaptionAndInsertNewTextComponent(int currentIndex);
   }
 }

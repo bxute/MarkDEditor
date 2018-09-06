@@ -76,7 +76,6 @@ public class TextComponent {
       @Override
       public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
         int clen = charSequence.length();
-
         if (clen > 0) {
           char ch = charSequence.charAt(charSequence.length() - 1);
           if (isSpaceCharacter(ch) && (before < count)) {
@@ -98,7 +97,6 @@ public class TextComponent {
           //if last characters are [AB\n<space>] or [AB\n] then we insert new TextComponent
           //else if last characters are [AB\nC] ignore the insert.
           if (sequenceToCheckNewLineCharacter.contains("\n") && noReadableCharactersAfterCursor) {
-
             //If last characters are like [AB\n ] then new sequence will be [AB]
             // i.e leave 2 characters from end.
             //else if last characters are like [AB\n] then also new sequence will be [AB]
@@ -107,7 +105,6 @@ public class TextComponent {
              charSequence.subSequence(0, clen - 2)
              :
              charSequence.subSequence(0, clen - 1);
-
             et.setText(newSequence);
             if (_textComponentCallback != null) {
               _textComponentCallback.onInsertTextComponent(((ComponentTag) customInput.getTag()).getComponentIndex());

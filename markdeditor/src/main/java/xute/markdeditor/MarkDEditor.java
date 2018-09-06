@@ -28,11 +28,10 @@ import static xute.markdeditor.components.TextComponentItem.MODE_OL;
 import static xute.markdeditor.components.TextComponentItem.MODE_PLAIN;
 import static xute.markdeditor.components.TextComponentItem.MODE_UL;
 
-public class MarkDEditor extends MarkDCore implements TextComponent.TextComponentCallback, ImageComponentItem.ImageRemoveListener {
-  public static final String TAG = MarkDEditor.class.getSimpleName();
+public class MarkDEditor extends MarkDCore implements
+ TextComponent.TextComponentCallback,
+ ImageComponentItem.ImageComponentListener {
   private View _activeView;
-  // index of activeView
-  private int controlIndex;
   private Context mContext;
   private TextComponent __textComponent;
   private ImageComponent __imageComponent;
@@ -125,8 +124,22 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
       int contentLen = ((TextComponentItem) previousView).getInputBox().getText().toString().length();
       ((TextComponentItem) previousView).getInputBox().append(String.format("%s", content));
       setFocus(previousView, contentLen);
+    } else if (previousView instanceof ImageComponentItem) {
+      setActiveView(previousView);
     }
     refreshViewOrder();
+  }
+
+  /**
+   * @param view to be focused on.
+   */
+  private void setFocus(View view) {
+    _activeView = view;
+    if (_activeView instanceof TextComponentItem) {
+      currentInputMode = ((TextComponentItem) _activeView).getMode();
+      ((TextComponentItem) view).getInputBox().requestFocus();
+      reportStylesOfFocusedView((TextComponentItem) view);
+    }
   }
 
   /**
@@ -160,15 +173,8 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     }
   }
 
-  /**
-   * @param view to be focused on.
-   */
-  private void setFocus(View view) {
-    controlIndex = ((ComponentTag) view.getTag()).getComponentIndex();
+  private void setActiveView(View view) {
     _activeView = view;
-    currentInputMode = ((TextComponentItem) _activeView).getMode();
-    ((TextComponentItem) view).getInputBox().requestFocus();
-    reportStylesOfFocusedView((TextComponentItem) view);
   }
 
   /**
@@ -346,12 +352,16 @@ public class MarkDEditor extends MarkDCore implements TextComponent.TextComponen
     refreshViewOrder();
   }
 
+  @Override
+  public void onExitFromCaptionAndInsertNewTextComponent(int currentIndex) {
+   addTextComponent(currentIndex);
+  }
+
   /**
    * overloaded method for focusing view, it puts the cursor at specified position.
    * @param view to be focused on.
    */
   private void setFocus(View view, int cursorPos) {
-    controlIndex = ((ComponentTag) view.getTag()).getComponentIndex();
     _activeView = view;
     view.requestFocus();
     if (view instanceof TextComponentItem) {

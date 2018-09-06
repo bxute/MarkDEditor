@@ -9,9 +9,9 @@ public class ImageComponent {
     this.context = context;
   }
 
-  public ImageComponentItem getNewImageComponentItem(String filePath, String serverToken, ImageComponentItem.ImageRemoveListener imageRemoveListener) {
+  public ImageComponentItem getNewImageComponentItem(String filePath, String serverToken, ImageComponentItem.ImageComponentListener imageRemoveListener) {
     ImageComponentItem imageComponentItem = new ImageComponentItem(context);
-    imageComponentItem.setImageRemoveListener(imageRemoveListener);
+    imageComponentItem.setImageComponentListener(imageRemoveListener);
     imageComponentItem.setFilePath(filePath, serverToken);
     return imageComponentItem;
   }

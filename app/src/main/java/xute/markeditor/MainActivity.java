@@ -16,7 +16,6 @@ import xute.markdeditor.MarkDEditor;
 import xute.markdeditor.utilities.FilePathUtils;
 
 public class MainActivity extends AppCompatActivity implements EditorControlBar.EditorControlListener {
-  int heading = -1;
   private MarkDEditor markDEditor;
   private EditorControlBar editorControlBar;
   private final int REQUEST_IMAGE_SELECTOR = 110;
