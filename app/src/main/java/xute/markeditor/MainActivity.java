@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements EditorControlBar.
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     markDEditor = findViewById(R.id.mdEditor);
+    markDEditor.setServerInfo("https://api.hapramp.com/api/v2/","7997ac6f-77fd-48e6-a358-7f85c148e769");
     editorControlBar = findViewById(R.id.controlBar);
     editorControlBar.setEditorControlListener(this);
     editorControlBar.setEditor(markDEditor);

@@ -28,7 +28,7 @@ Your editor will look something like:
 Step 2. Add the dependency
 ```groovy
 dependencies {
-  implementation 'com.github.bxute:MarkDEditor:v0.5'
+  implementation 'com.github.bxute:MarkDEditor:v0.10'
 }
 ```
 
