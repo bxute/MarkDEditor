@@ -37,11 +37,11 @@ public class MarkDownFormat {
   }
 
   public static String getImageFormat(String url) {
-    return String.format("<br>\\n<center>![Image](%s)</center>", url);
+    return String.format("\\n<center>![Image](%s)</center>", url);
   }
 
   public static String getCaptionFormat(String caption) {
-    return caption != null ? String.format("<center>%s</center>\\n\\n<br>", caption) : "\\n\\n<br><br>";
+    return caption != null ? String.format("<center>%s</center>\\n\\n\\n", caption) : "\\n\\n\\n";
   }
 
   public static String getLineFormat() {
