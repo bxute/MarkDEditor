@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
+    android:background="#009988"
     android:layout_height="wrap_content">
 
     <ImageView
@@ -30,16 +31,16 @@
 
     <ImageView
         android:id="@+id/removeImageBtn"
-        android:src="@drawable/remove_image"
+        android:src="@drawable/remove_image_icon"
         android:text="Remove"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_margin="8dp"
         android:layout_alignParentRight="true"
         android:background="@drawable/remove_image_button_bg"
         android:textColor="#ffffff"
-        android:padding="12dp"
-        android:layout_width="48dp"
-        android:layout_height="48dp" />
+        android:padding="8dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp" />
 
     <ProgressBar
         android:visibility="gone"
