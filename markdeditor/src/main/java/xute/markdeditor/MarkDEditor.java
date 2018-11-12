@@ -3,6 +3,7 @@ package xute.markdeditor;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -390,7 +391,7 @@ public class MarkDEditor extends MarkDCore implements
     ComponentTag imageComponentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
     imageComponentTag.setComponent(imageComponentModel);
     imageComponentItem.setTag(imageComponentTag);
-    imageComponentItem.setImageInformation(filePath, serverToken, false,"");
+    imageComponentItem.setImageInformation(filePath, serverToken, false, "");
     addView(imageComponentItem, insertIndex);
     reComputeTagsAfter(insertIndex);
     refreshViewOrder();
@@ -410,6 +411,8 @@ public class MarkDEditor extends MarkDCore implements
    * @return index of next insert.
    */
   private int checkInvalidateAndCalculateInsertIndex() {
+    if (_activeView == null)
+      return 0;
     ComponentTag tag = (ComponentTag) _activeView.getTag();
     int activeIndex = tag.getComponentIndex();
     View view = getChildAt(activeIndex);
@@ -439,8 +442,7 @@ public class MarkDEditor extends MarkDCore implements
    *
    * @param filePath uri of image to be inserted.
    */
-  public void insertImage(String filePath, boolean uploaded, String caption) {
-    int insertIndex = checkInvalidateAndCalculateInsertIndex();
+  public void insertImage(int insertIndex, String filePath, boolean uploaded, String caption) {
     ImageComponentItem imageComponentItem = __imageComponent.getNewImageComponentItem(this);
     //prepare tag
     ImageComponentModel imageComponentModel = new ImageComponentModel();
@@ -450,7 +452,6 @@ public class MarkDEditor extends MarkDCore implements
     imageComponentItem.setImageInformation(filePath, "", uploaded, caption);
     addView(imageComponentItem, insertIndex);
     reComputeTagsAfter(insertIndex);
-    refreshViewOrder();
   }
 
   /**
@@ -473,7 +474,7 @@ public class MarkDEditor extends MarkDCore implements
   /**
    * @return index next to focussed view.
    */
-  private int getNextIndex() {
+  public int getNextIndex() {
     ComponentTag tag = (ComponentTag) _activeView.getTag();
     return tag.getComponentIndex() + 1;
   }
@@ -494,6 +495,8 @@ public class MarkDEditor extends MarkDCore implements
       insertIndex++;
       currentInputMode = MODE_PLAIN;
       addTextComponent(insertIndex);
+    } else {
+      setFocus(horizontalDividerComponentItem);
     }
     refreshViewOrder();
   }
@@ -537,7 +540,7 @@ public class MarkDEditor extends MarkDCore implements
     } else {
       newDraft.setDraftId(System.currentTimeMillis());
     }
-    return draftManager.processDraftContent(this);
+    return newDraft;
   }
 
   /**

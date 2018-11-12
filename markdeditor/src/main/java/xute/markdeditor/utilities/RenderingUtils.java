@@ -1,5 +1,7 @@
 package xute.markdeditor.utilities;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 import xute.markdeditor.MarkDEditor;
@@ -113,7 +115,7 @@ public class RenderingUtils {
    *             Sets caption
    */
   private void renderImage(DraftDataItemModel item) {
-    markDEditor.insertImage(item.getDownloadUrl(), true, item.getCaption());
+    markDEditor.insertImage(getInsertIndex(),item.getDownloadUrl(), true, item.getCaption());
   }
 
   /**
@@ -122,6 +124,7 @@ public class RenderingUtils {
    * @return insert index.
    */
   private int getInsertIndex() {
-    return markDEditor.getChildCount();
+    int index = markDEditor.getChildCount();
+    return index;
   }
 }

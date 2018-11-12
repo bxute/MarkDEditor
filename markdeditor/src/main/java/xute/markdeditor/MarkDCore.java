@@ -3,6 +3,7 @@ package xute.markdeditor;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -15,6 +16,7 @@ import static xute.markdeditor.components.TextComponentItem.MODE_OL;
 
 public class MarkDCore extends LinearLayout {
   ArrayList<BulletGroupModel> bulletGroupModels;
+
   public MarkDCore(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
     init();
@@ -66,6 +68,8 @@ public class MarkDCore extends LinearLayout {
               } else {
                 break;
               }
+            } else {
+              break;
             }
           }
           //prepate model and add
@@ -83,6 +87,7 @@ public class MarkDCore extends LinearLayout {
    * Helper method to update the bullets.
    * If view are inserted/removed, bullets are reassigned to view,
    * so we need to update the view.
+   *
    * @param bulletGroupModels list of groups of bullets.
    */
   private void invalidateComponentMode(ArrayList<BulletGroupModel> bulletGroupModels) {
@@ -99,10 +104,16 @@ public class MarkDCore extends LinearLayout {
         //set ol mode
         int ci = 1;
         for (int j = si; j <= ei; j++) {
-          _tempChild = (TextComponentItem) getChildAt(j);
-          _tempChild.setMode(MODE_OL);
-          _tempChild.setIndicator(ci + ".");
-          ci++;
+          try {
+            _tempChild = (TextComponentItem) getChildAt(j);
+            _tempChild.setMode(MODE_OL);
+            _tempChild.setIndicator(ci + ".");
+            ci++;
+          }
+          catch (Exception e) {
+            Log.d("EditorCore", "pos " + j);
+            e.printStackTrace();
+          }
         }
       }
     }

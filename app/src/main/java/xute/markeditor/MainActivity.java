@@ -99,15 +99,15 @@ public class MainActivity extends AppCompatActivity implements EditorControlBar.
     filmsList2.setStyle(NORMAL);
     filmsList2.setMode(MODE_OL);
     filmsList2.setContent("2010 – Filmfare Award for Best Actress – Telugu for Darling");
-
-
     contentTypes.add(heading);
-    contentTypes.add(bl);
-    contentTypes.add(hrType);
-    contentTypes.add(body);
-    contentTypes.add(imageType);
-    contentTypes.add(sub_heading);
     contentTypes.add(filmsList1);
+    contentTypes.add(imageType);
+    contentTypes.add(filmsList2);
+    contentTypes.add(filmsList2);
+    contentTypes.add(filmsList2);
+    contentTypes.add(imageType);
+    contentTypes.add(imageType);
+    contentTypes.add(filmsList2);
     contentTypes.add(filmsList2);
     return new DraftModel(contentTypes);
   }
