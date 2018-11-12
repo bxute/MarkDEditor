@@ -384,12 +384,13 @@ public class MarkDEditor extends MarkDCore implements
    */
   public void insertImage(String filePath) {
     int insertIndex = checkInvalidateAndCalculateInsertIndex();
-    ImageComponentItem imageComponentItem = __imageComponent.getNewImageComponentItem(filePath, serverToken, this);
+    ImageComponentItem imageComponentItem = __imageComponent.getNewImageComponentItem(this);
     //prepare tag
     ImageComponentModel imageComponentModel = new ImageComponentModel();
     ComponentTag imageComponentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
     imageComponentTag.setComponent(imageComponentModel);
     imageComponentItem.setTag(imageComponentTag);
+    imageComponentItem.setImageInformation(filePath, serverToken, false,"");
     addView(imageComponentItem, insertIndex);
     reComputeTagsAfter(insertIndex);
     refreshViewOrder();

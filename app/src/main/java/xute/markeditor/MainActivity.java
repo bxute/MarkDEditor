@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements EditorControlBar.
 
   private DraftModel getDraftContent() {
     ArrayList<DraftDataItemModel> contentTypes = new ArrayList<>();
-
     DraftDataItemModel heading = new DraftDataItemModel();
     heading.setItemType(DraftModel.ITEM_TYPE_TEXT);
     heading.setContent("Kajal Aggarwal filmography");
