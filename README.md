@@ -28,7 +28,7 @@ Your editor will look something like:
 Step 2. Add the dependency
 ```groovy
 dependencies {
-  implementation 'com.github.bxute:MarkDEditor:v0.10'
+  implementation 'com.github.bxute:MarkDEditor:v0.16'
 }
 ```
 
@@ -59,6 +59,15 @@ Step 4. In Activity file
 MarkDEditor markDEditor = findViewById(R.id.mdEditor);
 editorControlBar = findViewById(R.id.controlBar);
 editorControlBar.setEditorControlListener(this);
+markDEditor.configureEditor(
+     "",//server url for image upload
+     "",              //serverToken
+     true,           // isDraft: set true when you are loading draft
+     "Type here...", //default hint of input box
+     NORMAL
+    );
+//load draft
+//markDEditor.loadDraft(getDraftContent());
 editorControlBar.setEditor(markDEditor);
 ```
 
