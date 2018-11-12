@@ -49,6 +49,7 @@ public class MarkDEditor extends MarkDCore implements
   private String startHintText;
   private int defaultHeadingType = NORMAL;
   private boolean isFreshEditor;
+  private DraftModel oldDraft;
 
   public MarkDEditor(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -183,6 +184,7 @@ public class MarkDEditor extends MarkDCore implements
   }
 
   public void loadDraft(DraftModel draft) {
+    oldDraft = draft;
     ArrayList<DraftDataItemModel> contents = draft.getItems();
     if (contents != null) {
       if (contents.size() > 0) {
@@ -528,6 +530,12 @@ public class MarkDEditor extends MarkDCore implements
    * @return List of Draft Content.
    */
   public DraftModel getDraft() {
+    DraftModel newDraft = draftManager.processDraftContent(this);
+    if (oldDraft != null) {
+      newDraft.setDraftId(oldDraft.getDraftId());
+    } else {
+      newDraft.setDraftId(System.currentTimeMillis());
+    }
     return draftManager.processDraftContent(this);
   }
 

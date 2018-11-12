@@ -13,14 +13,28 @@ public class DraftModel {
   public static final int ITEM_TYPE_HR = 2;
 
   @Expose
+  @SerializedName("draftTitle")
+  String draftTitle;
+  @Expose
   @SerializedName("draftId")
   long draftId;
   @Expose
   @SerializedName("items")
   ArrayList<DraftDataItemModel> items;
 
+  public DraftModel() {
+  }
+
   public DraftModel(ArrayList<DraftDataItemModel> items) {
     this.items = items;
+  }
+
+  public String getDraftTitle() {
+    return draftTitle;
+  }
+
+  public void setDraftTitle(String draftTitle) {
+    this.draftTitle = draftTitle;
   }
 
   public long getDraftId() {
