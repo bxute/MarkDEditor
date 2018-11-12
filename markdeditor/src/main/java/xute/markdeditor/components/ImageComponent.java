@@ -12,7 +12,13 @@ public class ImageComponent {
   public ImageComponentItem getNewImageComponentItem(String filePath, String serverToken, ImageComponentItem.ImageComponentListener imageRemoveListener) {
     ImageComponentItem imageComponentItem = new ImageComponentItem(context);
     imageComponentItem.setImageComponentListener(imageRemoveListener);
-    imageComponentItem.setFilePath(filePath, serverToken);
+    imageComponentItem.setImageInformation(filePath, serverToken, false,"");
+    return imageComponentItem;
+  }
+
+  public ImageComponentItem getNewImageComponentItem(ImageComponentItem.ImageComponentListener imageRemoveListener) {
+    ImageComponentItem imageComponentItem = new ImageComponentItem(context);
+    imageComponentItem.setImageComponentListener(imageRemoveListener);
     return imageComponentItem;
   }
 }

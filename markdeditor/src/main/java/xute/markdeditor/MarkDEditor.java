@@ -3,7 +3,6 @@ package xute.markdeditor;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -16,11 +15,15 @@ import xute.markdeditor.components.ImageComponent;
 import xute.markdeditor.components.ImageComponentItem;
 import xute.markdeditor.components.TextComponent;
 import xute.markdeditor.components.TextComponentItem;
+import xute.markdeditor.datatype.DraftDataItemModel;
 import xute.markdeditor.models.ComponentTag;
+import xute.markdeditor.models.DraftModel;
 import xute.markdeditor.models.ImageComponentModel;
 import xute.markdeditor.models.TextComponentModel;
 import xute.markdeditor.utilities.ComponentMetadataHelper;
+import xute.markdeditor.utilities.DraftManager;
 import xute.markdeditor.utilities.MarkDownConverter;
+import xute.markdeditor.utilities.RenderingUtils;
 
 import static xute.markdeditor.Styles.TextComponentStyle.BLOCKQUOTE;
 import static xute.markdeditor.Styles.TextComponentStyle.NORMAL;
@@ -31,15 +34,21 @@ import static xute.markdeditor.components.TextComponentItem.MODE_UL;
 public class MarkDEditor extends MarkDCore implements
  TextComponent.TextComponentCallback,
  ImageComponentItem.ImageComponentListener {
+  private static String serverUrl;
   private View _activeView;
   private Context mContext;
+  private DraftManager draftManager;
   private TextComponent __textComponent;
   private ImageComponent __imageComponent;
   private HorizontalDividerComponent __horizontalComponent;
   private int currentInputMode;
   private MarkDownConverter markDownConverter;
   private String serverToken;
-  private static String serverUrl;
+  private RenderingUtils renderingUtils;
+  private EditorFocusReporter editorFocusReporter;
+  private String startHintText;
+  private int defaultHeadingType = NORMAL;
+  private boolean isFreshEditor;
 
   public MarkDEditor(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -48,24 +57,53 @@ public class MarkDEditor extends MarkDCore implements
 
   private void init(Context context) {
     this.mContext = context;
+    draftManager = new DraftManager();
     bulletGroupModels = new ArrayList<>();
     markDownConverter = new MarkDownConverter();
     currentInputMode = MODE_PLAIN;
     __textComponent = new TextComponent(context, this);
     __imageComponent = new ImageComponent(context);
     __horizontalComponent = new HorizontalDividerComponent(context);
-    addTextComponent(0);
-    setHeading(NORMAL);
   }
 
-  public void setServerInfo(String serverUrl, String serverToken) {
-    this.serverToken = serverToken;
-    this.serverUrl = serverUrl;
-  }
-
-  public static String getServerUrl(){
+  public static String getServerUrl() {
     return serverUrl;
   }
+
+  /**
+   * Helper method to configure editor
+   *
+   * @param serverUrl
+   * @param serverToken
+   * @param isDraft
+   * @param startHint
+   * @param defaultHeadingType
+   */
+  public void configureEditor(
+   String serverUrl,
+   String serverToken,
+   boolean isDraft,
+   String startHint,
+   int defaultHeadingType) {
+    this.serverToken = serverToken;
+    this.serverUrl = serverUrl;
+    this.startHintText = startHint;
+    this.defaultHeadingType = defaultHeadingType;
+    if (!isDraft) {
+      startFreshEditor();
+    }
+  }
+
+  /**
+   * Inserts single text component
+   */
+  private void startFreshEditor() {
+    //starts basic editor with single text component.
+    this.isFreshEditor = true;
+    addTextComponent(0);
+    setHeading(defaultHeadingType);
+  }
+
   /**
    * adds new TextComponent.
    *
@@ -75,6 +113,11 @@ public class MarkDEditor extends MarkDCore implements
     TextComponentItem textComponentItem = __textComponent.newTextComponent(currentInputMode);
     //prepare tag
     TextComponentModel textComponentModel = new TextComponentModel();
+    if (insertIndex == 0) {
+      if (startHintText != null && isFreshEditor) {
+        textComponentItem.setHintText(startHintText);
+      }
+    }
     ComponentTag componentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
     componentTag.setComponent(textComponentModel);
     textComponentItem.setTag(componentTag);
@@ -85,7 +128,103 @@ public class MarkDEditor extends MarkDCore implements
     refreshViewOrder();
   }
 
-  private EditorFocusReporter editorFocusReporter;
+  /**
+   * sets heading to text component
+   *
+   * @param heading number to be set
+   */
+  public void setHeading(int heading) {
+    currentInputMode = MODE_PLAIN;
+    if (_activeView instanceof TextComponentItem) {
+      ((TextComponentItem) _activeView).setMode(currentInputMode);
+      ComponentTag componentTag = (ComponentTag) _activeView.getTag();
+      ((TextComponentModel) componentTag.getComponent()).setHeadingStyle(heading);
+      __textComponent.updateComponent(_activeView);
+    }
+    refreshViewOrder();
+  }
+
+  /**
+   * @param view to be focused on.
+   */
+  private void setFocus(View view) {
+    _activeView = view;
+    if (_activeView instanceof TextComponentItem) {
+      currentInputMode = ((TextComponentItem) _activeView).getMode();
+      ((TextComponentItem) view).getInputBox().requestFocus();
+      reportStylesOfFocusedView((TextComponentItem) view);
+    }
+  }
+
+  /**
+   * re-compute the indexes of view after a view is inserted/deleted.
+   *
+   * @param startIndex index after which re-computation will be done.
+   */
+  private void reComputeTagsAfter(int startIndex) {
+    View _child;
+    for (int i = startIndex; i < getChildCount(); i++) {
+      _child = getChildAt(i);
+      ComponentTag componentTag = (ComponentTag) _child.getTag();
+      componentTag.setComponentIndex(i);
+      _child.setTag(componentTag);
+    }
+  }
+
+  /**
+   * method to send callback for focussed view back to subscriber(if any).
+   *
+   * @param view newly focus view.
+   */
+  private void reportStylesOfFocusedView(TextComponentItem view) {
+    if (editorFocusReporter != null) {
+      editorFocusReporter.onFocusedViewHas(view.getMode(), view.getTextHeadingStyle());
+    }
+  }
+
+  public void loadDraft(DraftModel draft) {
+    ArrayList<DraftDataItemModel> contents = draft.getItems();
+    if (contents != null) {
+      if (contents.size() > 0) {
+        renderingUtils = new RenderingUtils();
+        renderingUtils.setEditor(this);
+        renderingUtils.render(contents);
+      } else {
+        startFreshEditor();
+      }
+    } else {
+      startFreshEditor();
+    }
+  }
+
+  /**
+   * Sets current mode for insert.
+   *
+   * @param currentInputMode mode of insert.
+   */
+  public void setCurrentInputMode(int currentInputMode) {
+    this.currentInputMode = currentInputMode;
+  }
+
+  /**
+   * adds new TextComponent with pre-filled text.
+   *
+   * @param insertIndex at which addition of new textcomponent take place.
+   */
+  public void addTextComponent(int insertIndex, String content) {
+    TextComponentItem textComponentItem = __textComponent.newTextComponent(currentInputMode);
+    //prepare tag
+    TextComponentModel textComponentModel = new TextComponentModel();
+    ComponentTag componentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
+    componentTag.setComponent(textComponentModel);
+    textComponentItem.setTag(componentTag);
+    textComponentItem.setText(content);
+    addView(textComponentItem, insertIndex);
+    __textComponent.updateComponent(textComponentItem);
+    setFocus(textComponentItem);
+    reComputeTagsAfter(insertIndex);
+    refreshViewOrder();
+  }
 
   @Override
   public void onInsertTextComponent(int selfIndex) {
@@ -101,6 +240,7 @@ public class MarkDEditor extends MarkDCore implements
    * This callback method removes view at given index.
    * It checks if there is a horizontal line just before it, it removes the line too.
    * Else it removes the current view only.
+   *
    * @param selfIndex index of view to remove.
    */
   @Override
@@ -131,20 +271,9 @@ public class MarkDEditor extends MarkDCore implements
   }
 
   /**
-   * @param view to be focused on.
-   */
-  private void setFocus(View view) {
-    _activeView = view;
-    if (_activeView instanceof TextComponentItem) {
-      currentInputMode = ((TextComponentItem) _activeView).getMode();
-      ((TextComponentItem) view).getInputBox().requestFocus();
-      reportStylesOfFocusedView((TextComponentItem) view);
-    }
-  }
-
-  /**
    * This method searches whithin view group for a TextComponent which was
    * inserted prior to startIndex.
+   *
    * @param starIndex index from which search starts.
    * @return index of LatestTextComponent before startIndex.
    */
@@ -159,17 +288,19 @@ public class MarkDEditor extends MarkDCore implements
   }
 
   /**
-   * re-compute the indexes of view after a view is inserted/deleted.
+   * overloaded method for focusing view, it puts the cursor at specified position.
    *
-   * @param startIndex index after which re-computation will be done.
+   * @param view to be focused on.
    */
-  private void reComputeTagsAfter(int startIndex) {
-    View _child;
-    for (int i = startIndex; i < getChildCount(); i++) {
-      _child = getChildAt(i);
-      ComponentTag componentTag = (ComponentTag) _child.getTag();
-      componentTag.setComponentIndex(i);
-      _child.setTag(componentTag);
+  private void setFocus(View view, int cursorPos) {
+    _activeView = view;
+    view.requestFocus();
+    if (view instanceof TextComponentItem) {
+      InputMethodManager mgr = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+      mgr.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+      //move cursor
+      ((TextComponentItem) view).getInputBox().setSelection(cursorPos);
+      reportStylesOfFocusedView((TextComponentItem) view);
     }
   }
 
@@ -194,23 +325,6 @@ public class MarkDEditor extends MarkDCore implements
        .append("</a> ");
       ((TextComponentItem) _activeView).getInputBox().append(stringBuilder.toString());
     }
-  }
-
-  /**
-   * sets heading to text component
-   *
-   * @param heading number to be set
-   */
-  public void setHeading(int heading) {
-    Log.d("Editor", "setting heading " + heading);
-    currentInputMode = MODE_PLAIN;
-    if (_activeView instanceof TextComponentItem) {
-      ((TextComponentItem) _activeView).setMode(currentInputMode);
-      ComponentTag componentTag = (ComponentTag) _activeView.getTag();
-      ((TextComponentModel) componentTag.getComponent()).setHeadingStyle(heading);
-      __textComponent.updateComponent(_activeView);
-    }
-    refreshViewOrder();
   }
 
   /**
@@ -315,7 +429,29 @@ public class MarkDEditor extends MarkDCore implements
   }
 
   /**
-   * inserts new horizontal ruler.
+   * This method gets the suitable insert index using
+   * `checkInvalidateAndCalculateInsertIndex()` method.
+   * Prepares the ImageComponent and inserts it.
+   * loads already uploaded image and sets caption
+   *
+   * @param filePath uri of image to be inserted.
+   */
+  public void insertImage(String filePath, boolean uploaded, String caption) {
+    int insertIndex = checkInvalidateAndCalculateInsertIndex();
+    ImageComponentItem imageComponentItem = __imageComponent.getNewImageComponentItem(this);
+    //prepare tag
+    ImageComponentModel imageComponentModel = new ImageComponentModel();
+    ComponentTag imageComponentTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
+    imageComponentTag.setComponent(imageComponentModel);
+    imageComponentItem.setTag(imageComponentTag);
+    imageComponentItem.setImageInformation(filePath, "", uploaded, caption);
+    addView(imageComponentItem, insertIndex);
+    reComputeTagsAfter(insertIndex);
+    refreshViewOrder();
+  }
+
+  /**
+   * Inserts new horizontal ruler.
    */
   public void insertHorizontalDivider() {
     int insertIndex = getNextIndex();
@@ -339,6 +475,26 @@ public class MarkDEditor extends MarkDCore implements
     return tag.getComponentIndex() + 1;
   }
 
+  /**
+   * Inserts new horizontal ruler.
+   * Adds new text components based on passed parameter.
+   */
+  public void insertHorizontalDivider(boolean insertNewTextComponentAfterThis) {
+    int insertIndex = getNextIndex();
+    HorizontalDividerComponentItem horizontalDividerComponentItem = __horizontalComponent.getNewHorizontalComponentItem();
+    ComponentTag _hrTag = ComponentMetadataHelper.getNewComponentTag(insertIndex);
+    horizontalDividerComponentItem.setTag(_hrTag);
+    addView(horizontalDividerComponentItem, insertIndex);
+    reComputeTagsAfter(insertIndex);
+    //add another text component below image
+    if (insertNewTextComponentAfterThis) {
+      insertIndex++;
+      currentInputMode = MODE_PLAIN;
+      addTextComponent(insertIndex);
+    }
+    refreshViewOrder();
+  }
+
   @Override
   public void onImageRemove(int removeIndex) {
     if (removeIndex == 0) {
@@ -354,34 +510,7 @@ public class MarkDEditor extends MarkDCore implements
 
   @Override
   public void onExitFromCaptionAndInsertNewTextComponent(int currentIndex) {
-   addTextComponent(currentIndex);
-  }
-
-  /**
-   * overloaded method for focusing view, it puts the cursor at specified position.
-   * @param view to be focused on.
-   */
-  private void setFocus(View view, int cursorPos) {
-    _activeView = view;
-    view.requestFocus();
-    if (view instanceof TextComponentItem) {
-      InputMethodManager mgr = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-      mgr.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
-      //move cursor
-      ((TextComponentItem) view).getInputBox().setSelection(cursorPos);
-      reportStylesOfFocusedView((TextComponentItem) view);
-    }
-  }
-
-  /**
-   * method to send callback for focussed view back to subscriber(if any).
-   *
-   * @param view newly focus view.
-   */
-  private void reportStylesOfFocusedView(TextComponentItem view) {
-    if (editorFocusReporter != null) {
-      editorFocusReporter.onFocusedViewHas(view.getMode(), view.getTextHeadingStyle());
-    }
+    addTextComponent(currentIndex);
   }
 
   /**
@@ -396,6 +525,13 @@ public class MarkDEditor extends MarkDCore implements
   }
 
   /**
+   * @return List of Draft Content.
+   */
+  public DraftModel getDraft() {
+    return draftManager.processDraftContent(this);
+  }
+
+  /**
    * @return list of images inserted.
    */
   public List<String> getImageList() {
@@ -405,8 +541,10 @@ public class MarkDEditor extends MarkDCore implements
       return markDownConverter.processData(this).getImages();
     }
   }
+
   /**
    * setter method to subscribe for listening to focus change.
+   *
    * @param editorFocusReporter callback for editor focus.
    */
   public void setEditorFocusReporter(EditorFocusReporter editorFocusReporter) {

@@ -4,6 +4,9 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import xute.markdeditor.datatype.DraftDataItemModel;
+import xute.markdeditor.utilities.RenderingUtils;
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -12,28 +15,13 @@ import java.util.ArrayList;
 public class ExampleUnitTest {
   @Test
   public void addition_isCorrect() {
-    ArrayList<Group> groups = new ArrayList<>();
-    int si = -1;
-    int ei = -1;
-
-    int[] n = {0,1,1,1,1,0,2,2};
-    //group of 1 and 0 are valid
-    for (int i = 0; i < n.length; i++) {
-      if (n[i] == 1) {
-        si = i;
-        //search for end of 0
-        for (int j = i; j < n.length; j++) {
-          i = j;
-          if (n[j] == 1) {
-            ei = j;
-          } else {
-            break;
-          }
-        }
-        groups.add(new Group(si, ei));
-      }
-    }
-    System.out.println(groups.toString());
+    RenderingUtils renderingUtils = new RenderingUtils();
+    ArrayList<DraftDataItemModel> types = new ArrayList<>();
+    types.add(new TextType());
+    types.add(new TextType());
+    types.add(new ImageType());
+    types.add(new HRType());
+    renderingUtils.render(types);
   }
 
   class Group {

@@ -9,26 +9,108 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 import xute.markdeditor.EditorControlBar;
 import xute.markdeditor.MarkDEditor;
+import xute.markdeditor.datatype.DraftDataItemModel;
+import xute.markdeditor.models.DraftModel;
 import xute.markdeditor.utilities.FilePathUtils;
 
+import static xute.markdeditor.Styles.TextComponentStyle.BLOCKQUOTE;
+import static xute.markdeditor.Styles.TextComponentStyle.H1;
+import static xute.markdeditor.Styles.TextComponentStyle.H3;
+import static xute.markdeditor.Styles.TextComponentStyle.NORMAL;
+import static xute.markdeditor.components.TextComponentItem.MODE_OL;
+import static xute.markdeditor.components.TextComponentItem.MODE_PLAIN;
+
 public class MainActivity extends AppCompatActivity implements EditorControlBar.EditorControlListener {
+  private final int REQUEST_IMAGE_SELECTOR = 110;
   private MarkDEditor markDEditor;
   private EditorControlBar editorControlBar;
-  private final int REQUEST_IMAGE_SELECTOR = 110;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     markDEditor = findViewById(R.id.mdEditor);
-    markDEditor.setServerInfo("https://api.hapramp.com/api/v2/","7997ac6f-77fd-48e6-a358-7f85c148e769");
+    markDEditor.configureEditor(
+     "https://api.hapramp.com/api/v2/",
+     "",
+     true,
+     "Start Here...",
+     BLOCKQUOTE
+    );
+    markDEditor.loadDraft(getDraftContent());
     editorControlBar = findViewById(R.id.controlBar);
     editorControlBar.setEditorControlListener(this);
     editorControlBar.setEditor(markDEditor);
+  }
+
+  private DraftModel getDraftContent() {
+    ArrayList<DraftDataItemModel> contentTypes = new ArrayList<>();
+
+    DraftDataItemModel heading = new DraftDataItemModel();
+    heading.setItemType(DraftModel.ITEM_TYPE_TEXT);
+    heading.setContent("Kajal Aggarwal filmography");
+    heading.setMode(MODE_PLAIN);
+    heading.setStyle(H1);
+
+    DraftDataItemModel sub_heading = new DraftDataItemModel();
+    sub_heading.setItemType(DraftModel.ITEM_TYPE_TEXT);
+    sub_heading.setContent("Nominated");
+    sub_heading.setMode(MODE_PLAIN);
+    sub_heading.setStyle(H3);
+
+    DraftDataItemModel bl = new DraftDataItemModel();
+    bl.setItemType(DraftModel.ITEM_TYPE_TEXT);
+    bl.setContent("A super star of south movies!");
+    bl.setMode(MODE_PLAIN);
+    bl.setStyle(BLOCKQUOTE);
+
+    DraftDataItemModel body = new DraftDataItemModel();
+    body.setItemType(DraftModel.ITEM_TYPE_TEXT);
+    body.setContent("\n" +
+     "Kajal Aggarwal in March 2017\n" +
+     "Kajal Aggarwal is an Indian actress who appears in primarily in Tamil and Telugu films.[1] She made her acting debut with a minor role in the Hindi film Kyun! Ho Gaya Na..., a box office failure. She later signed up P. Bharathiraja's Tamil film Bommalattam, which was to have been her first film in that language, but it was delayed.");
+    body.setMode(MODE_PLAIN);
+    body.setStyle(NORMAL);
+
+    DraftDataItemModel hrType = new DraftDataItemModel();
+    hrType.setItemType(DraftModel.ITEM_TYPE_HR);
+
+    DraftDataItemModel imageType = new DraftDataItemModel();
+    imageType.setItemType(DraftModel.ITEM_TYPE_IMAGE);
+    imageType.setDownloadUrl("https://cdn.shopify.com/s/files/1/0166/3704/products/78008-3_grande.jpg");
+    imageType.setCaption("Cute Pink Photo");
+
+    DraftDataItemModel filmsList1 = new DraftDataItemModel();
+    filmsList1.setItemType(DraftModel.ITEM_TYPE_TEXT);
+    filmsList1.setStyle(NORMAL);
+    filmsList1.setMode(MODE_OL);
+    filmsList1.setContent("2009 – Filmfare Award for Best Actress – Telugu for Magadheera");
+
+    DraftDataItemModel filmsList2 = new DraftDataItemModel();
+    filmsList2.setItemType(DraftModel.ITEM_TYPE_TEXT);
+    filmsList2.setStyle(NORMAL);
+    filmsList2.setMode(MODE_OL);
+    filmsList2.setContent("2010 – Filmfare Award for Best Actress – Telugu for Darling");
+
+
+    contentTypes.add(heading);
+    contentTypes.add(bl);
+    contentTypes.add(hrType);
+    contentTypes.add(body);
+    contentTypes.add(imageType);
+    contentTypes.add(sub_heading);
+    contentTypes.add(filmsList1);
+    contentTypes.add(filmsList2);
+    return new DraftModel(contentTypes);
   }
 
   @Override
@@ -91,13 +173,8 @@ public class MainActivity extends AppCompatActivity implements EditorControlBar.
   }
 
   private void sendMail() {
-    String md = markDEditor.getMarkdownContent();
-    final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-    emailIntent.setType("text/plain");
-    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"ankit.kumar071460@gmail.com"});
-    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Generated Markdown");
-    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, md);
-    startActivity(Intent.createChooser(emailIntent,
-     "Send email using..."));
+    DraftModel dm = markDEditor.getDraft();
+    String json = new Gson().toJson(dm);
+    Log.d("MarkDEditor", json);
   }
 }

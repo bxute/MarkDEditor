@@ -75,7 +75,7 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     retryUpload.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        setFilePath(filePath, serverToken);
+        setImageInformation(filePath, serverToken, false,"");
       }
     });
 
@@ -107,6 +107,26 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     });
   }
 
+  public void setImageInformation(String filePath, String serverToken, boolean imageUploaded, String caption) {
+    this.serverToken = serverToken;
+    this.filePath = filePath;
+    setCaption(caption);
+    if (caption != null) {
+      captionEt.setText(caption);
+    }
+    loadImage(filePath);
+    if (imageUploaded) {
+      onImageUploaded(filePath);
+    } else {
+      startImageUpload(filePath);
+    }
+  }
+
+  private int getSelfIndex() {
+    ComponentTag tag = (ComponentTag) getTag();
+    return tag.getComponentIndex();
+  }
+
   private void checkReturnPressToInsertNewTextComponent(CharSequence charSequence) {
     int clen = charSequence.length();
     if (clen > 0) {
@@ -123,66 +143,9 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
       }
     }
   }
-  public void setFilePath(String filePath, String serverToken) {
-    this.serverToken = serverToken;
+
+  private void loadImage(String filePath) {
     ImageHelper.load(mContext, imageView, filePath);
-    this.filePath = filePath;
-    imageUploading = true;
-    uploadingState();
-    imageUploader.uploadImage(filePath, serverToken);
-  }
-
-  private int getSelfIndex() {
-    ComponentTag tag = (ComponentTag) getTag();
-    return tag.getComponentIndex();
-  }
-
-  private void uploadingState() {
-    retryUpload.setVisibility(GONE);
-    statusMessage.setVisibility(VISIBLE);
-    statusMessage.setText("Uploading...");
-    imageUploadProgressBar.setVisibility(VISIBLE);
-    removeImageButton.setVisibility(VISIBLE);
-    //remove listener
-    imageView.setOnClickListener(null);
-  }
-
-  public ImageComponentItem(@NonNull Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
-    init(context);
-  }
-
-  public boolean isImageUploaded() {
-    return imageUploaded;
-  }
-
-  public boolean isImageUploading() {
-    return imageUploading;
-  }
-
-  public String getDownloadUrl() {
-    return downloadUrl;
-  }
-
-  public void setCaption(String caption) {
-    this.caption = caption;
-    ComponentTag tag = (ComponentTag) getTag();
-    ((ImageComponentModel) tag.getComponent()).setCaption(caption);
-  }
-
-  public void setFocus() {
-    imageView.setEnabled(true);
-  }
-
-  public String getCaption() {
-    return caption;
-  }
-
-  public void setDownloadUrl(String downloadUrl) {
-    this.downloadUrl = downloadUrl;
-    ComponentTag tag = (ComponentTag) getTag();
-    ((ImageComponentModel) tag.getComponent()).setUrl(downloadUrl);
-
   }
 
   @Override
@@ -191,6 +154,17 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     imageUploading = false;
     imageUploaded = true;
     uploadedState();
+  }
+
+  /**
+   * Uploads image to server.
+   *
+   * @param filePath local path of image to be uploaded.
+   */
+  private void startImageUpload(String filePath) {
+    imageUploading = true;
+    uploadingState();
+    imageUploader.uploadImage(filePath, serverToken);
   }
 
   private void uploadedState() {
@@ -202,6 +176,16 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     hideExtraInfroWithDelay();
     //set listener
     imageView.setOnClickListener(imageClickListener);
+  }
+
+  private void uploadingState() {
+    retryUpload.setVisibility(GONE);
+    statusMessage.setVisibility(VISIBLE);
+    statusMessage.setText("Uploading...");
+    imageUploadProgressBar.setVisibility(VISIBLE);
+    removeImageButton.setVisibility(VISIBLE);
+    //remove listener
+    imageView.setOnClickListener(null);
   }
 
   private void hideExtraInfroWithDelay() {
@@ -233,6 +217,44 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
     //remove listener
     imageView.setOnClickListener(null);
   }
+
+  public ImageComponentItem(@NonNull Context context, @Nullable AttributeSet attrs) {
+    super(context, attrs);
+    init(context);
+  }
+
+  public boolean isImageUploaded() {
+    return imageUploaded;
+  }
+
+  public boolean isImageUploading() {
+    return imageUploading;
+  }
+
+  public String getDownloadUrl() {
+    return downloadUrl;
+  }
+
+  public void setDownloadUrl(String downloadUrl) {
+    this.downloadUrl = downloadUrl;
+    ComponentTag tag = (ComponentTag) getTag();
+    ((ImageComponentModel) tag.getComponent()).setUrl(downloadUrl);
+  }
+
+  public void setFocus() {
+    imageView.setEnabled(true);
+  }
+
+  public String getCaption() {
+    return caption;
+  }
+
+  public void setCaption(String caption) {
+    this.caption = caption;
+    ComponentTag tag = (ComponentTag) getTag();
+    ((ImageComponentModel) tag.getComponent()).setCaption(caption);
+  }
+
 
   public void setImageComponentListener(ImageComponentListener imageComponentListener) {
     this.imageComponentListener = imageComponentListener;

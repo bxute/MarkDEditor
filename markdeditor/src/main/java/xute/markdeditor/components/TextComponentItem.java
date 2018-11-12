@@ -48,6 +48,22 @@ public class TextComponentItem extends FrameLayout {
     init(context, MODE_PLAIN);
   }
 
+  public void setHintText(String hint) {
+    editText.setHint(hint);
+  }
+
+  public void setText(String content) {
+    editText.setText(content);
+  }
+
+  public EditText getInputBox() {
+    return editText;
+  }
+
+  public int getMode() {
+    return mEditorMode;
+  }
+
   public void setMode(int mode) {
     this.mEditorMode = mode;
     if (mode == MODE_PLAIN) {
@@ -61,18 +77,6 @@ public class TextComponentItem extends FrameLayout {
       indicatorTv.setVisibility(VISIBLE);
       editText.setBackgroundResource(R.drawable.text_input_bg);
     }
-  }
-
-  public void setText(String content) {
-    editText.setText(content);
-  }
-
-  public EditText getInputBox() {
-    return editText;
-  }
-
-  public int getMode() {
-    return mEditorMode;
   }
 
   public int getTextHeadingStyle() {
