@@ -243,6 +243,7 @@ public class ImageComponentItem extends FrameLayout implements ImageUploader.Ima
 
   public void setFocus() {
     imageView.setEnabled(true);
+    captionEt.requestFocus();
   }
 
   public String getCaption() {

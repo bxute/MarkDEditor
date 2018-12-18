@@ -102,13 +102,13 @@ public class MainActivity extends AppCompatActivity implements EditorControlBar.
     contentTypes.add(heading);
     contentTypes.add(filmsList1);
     contentTypes.add(imageType);
-    contentTypes.add(filmsList2);
-    contentTypes.add(filmsList2);
-    contentTypes.add(filmsList2);
-    contentTypes.add(imageType);
-    contentTypes.add(imageType);
-    contentTypes.add(filmsList2);
-    contentTypes.add(filmsList2);
+//    contentTypes.add(filmsList2);
+//    contentTypes.add(filmsList2);
+//    contentTypes.add(filmsList2);
+//    contentTypes.add(imageType);
+//    contentTypes.add(imageType);
+//    contentTypes.add(filmsList2);
+//    contentTypes.add(filmsList2);
     return new DraftModel(contentTypes);
   }
 

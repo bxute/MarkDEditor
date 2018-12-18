@@ -250,12 +250,9 @@ public class MarkDEditor extends MarkDCore implements
   public void onRemoveTextComponent(int selfIndex) {
     if (selfIndex == 0)
       return;
-    //know the type of previous view
     View viewToBeRemoved = getChildAt(selfIndex);
     View previousView = getChildAt(selfIndex - 1);
     String content = ((TextComponentItem) viewToBeRemoved).getInputBox().getText().toString();
-    removeViewAt(selfIndex);
-    reComputeTagsAfter(selfIndex);
     if (previousView instanceof HorizontalDividerComponentItem) {
       //remove previous view.
       removeViewAt(selfIndex - 1);
@@ -264,12 +261,15 @@ public class MarkDEditor extends MarkDCore implements
       int lastTextComponent = getLatestTextComponentIndexBefore(selfIndex - 1);
       setFocus(getChildAt(lastTextComponent));
     } else if (previousView instanceof TextComponentItem) {
+      removeViewAt(selfIndex);
       int contentLen = ((TextComponentItem) previousView).getInputBox().getText().toString().length();
       ((TextComponentItem) previousView).getInputBox().append(String.format("%s", content));
       setFocus(previousView, contentLen);
     } else if (previousView instanceof ImageComponentItem) {
       setActiveView(previousView);
+      ((ImageComponentItem) previousView).setFocus();
     }
+    reComputeTagsAfter(selfIndex);
     refreshViewOrder();
   }
 
