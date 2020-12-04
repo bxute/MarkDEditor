@@ -1,5 +1,5 @@
 # MarkDEditor [![](https://jitpack.io/v/bxute/MarkDEditor.svg)](https://jitpack.io/#bxute/MarkDEditor)
-#### A Markdown WYSIWYG Editor.
+#### A Markdown Editor For Android.
 
 Your editor will look something like:
 
@@ -115,7 +115,7 @@ Any contributions are welcome. You can send PR or open issues.
 ### License
 MIT License
 
-Copyright (c) 2018 bxute
+Copyright (c) 2018 Hapramp Studio Pvt. Ltd.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
